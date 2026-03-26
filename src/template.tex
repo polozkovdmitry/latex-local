@@ -1,0 +1,97 @@
+\documentclass[12pt]{article}
+
+% --- Encoding / language (XeLaTeX-safe) ---
+\usepackage{fontspec}
+\usepackage[russian,english]{babel}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Times New Roman}
+
+% --- Math / theorem ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage{breqn}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+\usepackage{enumerate}
+\usepackage{empheq}
+
+% --- Graphics / layout ---
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2cm,
+    bottom=2cm,
+    bindingoffset=0cm
+}
+
+% --- Extra utilities ---
+\usepackage{pifont}
+\usepackage{lipsum}
+\usepackage{todonotes}
+\usepackage{csquotes}
+
+% --- Bibliography ---
+\usepackage[backend=biber,style=alphabetic]{biblatex}
+\addbibresource{references.bib}
+
+% --- Hyperref (must be loaded last) ---
+\usepackage{hyperref}
+
+% --- Custom imports ---
+\input{notations}
+
+% --- Safe image inclusion (shows empty figure if file missing) ---
+\newcommand{\safeincludegraphics}[2][]{%
+    \IfFileExists{#2}{%
+        \includegraphics[#1]{#2}%
+    }{%
+        \textcolor{gray}{\rule{0.8\linewidth}{0.6\linewidth}}%
+    }%
+}
+
+% --- Theorems ---
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% --- Colors ---
+\definecolor{darkred}{RGB}{139,0,0}
+
+% --- Date helper ---
+\newcommand{\todayYYMMDD}{\the\year-\the\month-\the\day}
+
+
+\begin{document}
+
+\hfill
+% \todayYYMMDD
+\begin{center}
+% \section*{Custom course or document title}
+\textit{Document title here}\\
+% \textit{Optional subtitle}\\
+\textit{Author: Your Name}\\
+% \textit{Supervisor: Name}\\
+\textit{Date: \today}
+\end{center}
+
+\tableofcontents
+\newpage 
+
+\vspace*{\fill}
+\begin{center}
+\textit{This page intentionally left blank. Start writing below.}
+\end{center}
+\vspace*{\fill}
+
+\end{document}
+

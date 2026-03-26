@@ -3,20 +3,22 @@
 Local XeLaTeX + VS Code + LaTeX Workshop.
 Unlimited compiles, no cloud limits.
 
-## Compilation
+## Requirements
 
-Compile a LaTeX document using the `compile.sh` script:
+- XeLaTeX toolchain (recommended: `texlive` with `latexmk`)
+- VS Code + LaTeX Workshop (optional, but recommended)
+
+## Quick start
+
+From the repo root:
 
 ```bash
-# Compile main.tex
-./src/compile.sh main.tex
-
-# Compile ks_jj.tex
-./src/compile.sh ks_jj.tex
-
-# You can also omit the .tex extension
+# Compile a .tex file from src/ into build/
 ./src/compile.sh main
-./src/compile.sh ks_jj
 ```
 
-The compiled PDF will be saved in the `build/` directory.
+Output PDFs are written to `build/`.
+
+## Notes
+
+- This repo intentionally keeps build artifacts out of version control; commit source files in `src/`, not generated outputs.

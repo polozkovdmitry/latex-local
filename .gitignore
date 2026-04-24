@@ -1,4 +1,8 @@
 /build/
+/pdfs/
+projects/private/*
+!projects/private/.gitkeep
+
 *.aux
 *.log
 *.out
@@ -6,9 +10,7 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
-
-# Ignore everything in src by default
-src/*
-# But keep these public files tracked
-!src/compile.sh
-!src/template.tex
+*.bbl
+*.bcf
+*.blg
+*.run.xml

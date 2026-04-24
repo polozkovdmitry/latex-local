@@ -1,0 +1,38 @@
+% --- Encoding / language (XeLaTeX-safe) ---
+\usepackage{fontspec}
+\usepackage[russian,english]{babel}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Times New Roman}
+
+% --- Math ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+% --- Hyperref ---
+\usepackage{hyperref}
+
+% --- Beamer theme ---
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% --- Custom imports ---
+\input{notations}
+
+% --- Safe image inclusion (shows empty figure if file missing) ---
+\newcommand{\safeincludegraphics}[2][]{%
+    \IfFileExists{#2}{%
+        \includegraphics[#1]{#2}%
+    }{%
+        \textcolor{gray}{\rule{0.8\linewidth}{0.6\linewidth}}%
+    }%
+}
+
+% --- Colors ---
+\definecolor{darkred}{RGB}{139,0,0}

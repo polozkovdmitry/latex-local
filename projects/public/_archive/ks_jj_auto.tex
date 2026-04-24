@@ -1,0 +1,2102 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage[normalem]{ulem}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\textbf{KRAMERS-SMOLUCHOWSKI LIMIT: FROM UNDERDAMPED TO}
+
+\textbf{OVERDAMPED LANGEVIN DYNAMICS}
+
+J-F. JABIR FOR D. POLOZKOV
+
+\begin{quote}
+\textbf{1. Framework: Langevin dynamics.}
+\end{quote}
+
+Langevin dynamics define a class of second order SDEs characterized by
+the following (formal) stochastic
+
+\begin{quote}
+Newton law:
+
+\emph{γ}¨\emph{Xγt}= \emph{F}(\emph{t, Xγt,} ˙\emph{Xγt}) \emph{dt} +
+\emph{σ}(\emph{t, Xγt,} ˙\emph{Xγt}) ˙\emph{Lt,} \emph{t ≥}0\emph{.}
+
+From a physical point of view, \emph{Xγ}= (\emph{Xγ}
+\end{quote}
+
+\emph{Xγ}= ( ˙\emph{Xγt})\emph{t≥}0its velocity, \emph{γ} the volumic
+mass of the body, \emph{F} : {[}0\emph{, ∞}) \emph{×} R\emph{d ×}
+R\emph{d →}R\emph{d} a external force \emph{t})\emph{t≥}0models the
+position of a generic body evolving in R\emph{d},
+
+field and (\emph{Lt})\emph{t≥}0 a \emph{m}-dimensional stochastic
+perturbation weighted by an inhomogeneous dispersion matrix \emph{σ}.
+Setting \emph{Vγ}= ˙\emph{Xγ}, the above rewrites more rigorously into
+the R2\emph{d}-valued SDE system:
+
+\begin{quote}
+\emph{dXγt}= \emph{V γtdt,} \emph{dVγt}= \emph{γ−}1\emph{F}(\emph{t,
+Xγt, V γt}) \emph{dt} + \emph{γ−}1\emph{σ}(\emph{t, Xγt, V
+γt})\emph{dLt,} \emph{t ≥}0\emph{.} (1.1)
+
+In this formulation the coefficient \emph{γ−}1is understood as a
+friction force.
+
+\emph{Remark} 1\emph{.} A prototypical instance of (1.1) is given by the
+following setting:
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\toprule()
+\multicolumn{4}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.5714} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{L} = \emph{W} is a d-dimensional Brownian motion\emph{,}
+\end{quote}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2857} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{F}(\emph{t, x, v}) = \emph{−∇f}(\emph{x}) \emph{−λv,}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+(1.2)
+
+(1.3)
+\end{minipage}} \\
+\multicolumn{2}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2857} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{σ}(\emph{t, x, v}) = \emph{σId×d \textgreater{}} 0\emph{,} In this
+situation (1.1) writes as
+\end{quote}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2857} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{σ} is a scalar constant\emph{.}
+\end{minipage}} \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{dXγt}= \emph{V γtdt,}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2857} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{dVγt}= \emph{−γ−}1
+\end{quote}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2857} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{∇f}(\emph{Xγt}) + \emph{V γt}) \emph{dt} + \emph{γ−}1\emph{σ dWt,}
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{t ≥}0\emph{.}
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+Langevin dynamics, originally introduced in {[}5{]}, apply in modern
+science in a wide range of fields, including
+
+fluid dynamics, biology, economy, social science ({[}7, 6{]}) and not so
+long ago, in artificial intelligence ({[}1{]}).
+
+\begin{quote}
+\textbf{2. Clarification on Pavliotis} {[}8{]} \textbf{scaling and
+limits.}
+\end{quote}
+
+(This section mainly refers to Chapter 6 in {[}8{]}) The Langevin model
+in {[}8{]} (see Equation (6.1) p. 181)
+
+\begin{quote}
+corresponds to a second order stochastic system describing the motion of
+a "particle" with
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.0526}}@{}}
+\toprule()
+\multicolumn{9}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.4737} + 16\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{d} ˙\emph{qt} = \emph{−∇U}(\emph{qt}) \emph{dt −η} ˙\emph{qt dt} +
+\end{minipage}} &
+\multicolumn{7}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.3684} + 12\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+2\emph{η}\\
+\emph{β dWt,}
+\end{quote}\strut
+\end{minipage}} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1579} + 4\tabcolsep}@{}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{t ≥}0\emph{,}
+\end{quote}
+\end{minipage \\
+\midrule()
+\endhead
+\multicolumn{19}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{1.0000} + 36\tabcolsep}@{}}{%
+where \emph{q} = (\emph{qt})\emph{t} is the position dynamics of the
+particle and ˙\emph{q} = ( ˙\emph{qt})\emph{t} the related velocity
+dynamics.
+
+Motions are assumed to start at the position \emph{q}0 and velocity
+˙\emph{q}0. (For notation consistency, the notation
+
+of the potential force and the friction coefficient are here denoted by
+\emph{∇U} and \emph{η} instead of \emph{∇V} and \emph{γ} in {[}8{]}.) To
+this model, we associate the family of rescalled dynamics} \\
+\multicolumn{9}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.4737} + 16\tabcolsep}}{%
+\emph{qηt}:= \emph{ληqt/µη,} &
+\multicolumn{10}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.5263} + 18\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{t ≥}0\emph{.}
+\end{quote}
+\end{minipage \\
+\multicolumn{19}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{1.0000} + 36\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+As such, the corresponding velocity ˙\emph{qη}is given by ˙\emph{qηt}=
+\emph{ληµη}˙\emph{qt/µη} and so
+\end{quote}
+\end{minipage \\
+\emph{qη}˙\emph{t}= \emph{λη}
+
+\emph{µη} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{q}0 \emph{−ηλη}
+\end{quote}
+\end{minipage}} & 0 &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1579} + 4\tabcolsep}}{%
+\emph{t/µη} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{∇U}(\emph{qs}) \emph{ds −λη}
+\end{quote}
+\end{minipage}} & 0 &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+\emph{t/µη} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.2632} + 8\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{qs ds} +\emph{ληµη}
+\end{quote}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2\emph{η}\\
+\emph{β Wt/µη}
+\end{quote}\strut
+\end{minipage \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+=\emph{λη}\\
+\emph{µη}
+\end{quote}\strut
+\end{minipage}} & \emph{q}0 \emph{−}˙ & \emph{λη} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+0 & \emph{t} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+\emph{∇U}(\emph{qs/µη}) &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1579} + 4\tabcolsep}}{%
+\emph{ds −ηλη}(\emph{µη})2 &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+0 & \emph{t} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+\emph{qs/µη}˙ &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.1053} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{ds} +\emph{ληµη}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2\emph{η}\\
+\emph{β Wt/µη}
+\end{quote}\strut
+\end{minipage \\
+& & (\emph{µη})2 \\
+\multicolumn{9}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.4737} + 16\tabcolsep}}{%
+=\emph{∇U}(\emph{qηs/λη})} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.3158} + 10\tabcolsep}}{%
+=} &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 36\tabcolsep) * \real{0.2105} + 6\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{λη}˙\emph{qηs}
+\end{quote}
+\end{minipage \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\emph{Date}: October 9, 2024.
+\end{quote}
+
+1
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+2
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+3
+\end{minipage} &
+\multicolumn{10}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.8333} + 18\tabcolsep}@{}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+CLARIFICATION ON PAVLIOTIS {[}8{]} SCALING AND LIMITS
+\end{quote}
+\end{minipage \\
+\midrule()
+\endhead
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.2500} + 4\tabcolsep}}{%
+Since (see e.g. {[}4{]}) (\emph{Wt/µη})\emph{t≥}0} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.7500} + 16\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+= (\emph{Wt/√µη})\emph{t≥}0, ˙\emph{qη}can be viewed as solution to the
+SDE:
+\end{quote}
+\end{minipage \\
+\multicolumn{4}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.3333} + 6\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{d} ˙\emph{qηt}= \emph{−λη}(\emph{µη})2 \emph{∇U}(\emph{qηt/λη})
+\emph{dt −ηµη}
+\end{quote}
+\end{minipage}} & \emph{qη}˙\emph{tdt} + &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.1667} + 2\tabcolsep}}{%
+\emph{λη} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.1667} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2\emph{η}\\
+\emph{β dWt,}
+\end{quote}\strut
+\end{minipage}} &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{t ≥}0\emph{,}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{qη}˙0= \emph{λη}
+\end{quote}
+
+\emph{µη}
+\end{minipage}} &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{q}0\emph{.}˙
+\end{quote}
+\end{minipage \\
+& & & & &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.1667} + 2\tabcolsep}}{%
+(\emph{µη})3\emph{/}2} \\
+\multicolumn{12}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{1.0000} + 22\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+In particular, taking \emph{λη} = 1 and \emph{µη} = 1\emph{/η}, the
+above writes as
+\end{quote}
+\end{minipage \\
+\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.5000} + 10\tabcolsep}}{%
+\emph{d} ˙\emph{qηt}= \emph{−η}2\emph{∇U}(\emph{qηt}) \emph{dt −η}2
+˙\emph{qηtdt} + \emph{η}2} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.1667} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2\\
+\emph{β dWt,}
+\end{quote}\strut
+\end{minipage}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{t ≥}0\emph{,}
+\end{quote}
+\end{minipage} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.2500} + 4\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{qη}˙0= \emph{η} ˙\emph{q}0\emph{.}
+\end{quote}
+\end{minipage \\
+\multicolumn{12}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{1.0000} + 22\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Comparing the above with (1.1) (and as intuited above), the (friction)
+coefficient \emph{η}2corresponds to the inverse of the mass \emph{γ}.
+(While the rescaling in {[}8{]} are seemingly coherent with our initial
+Langevin framework, the remaining impact on the initial velocity seems
+to have been overlooked: the Kramers-Smoluchowski limit \emph{γ ↓}0 or
+equivalently \emph{η ↑∞}makes ˙Proposition 1 below ... The initial
+velocity ˙\emph{q}0 should have been redefined as ˙\emph{qη}0= \emph{η}
+˙\emph{q}0 blows up which greatly contrasts with \emph{q}0 =
+\emph{V}0\emph{/η} for some fixed random \emph{V}0 \emph{∈}R\emph{d}).
+\end{quote}
+\end{minipage \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{3. Quantitative Kramers-Smoluchowski limit.}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\multicolumn{4}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{1.0000} + 6\tabcolsep}@{}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+In the proposition below, under the prototypical condition (1.2), we
+establish the so-called Kramers-Smoluchowski limit asserting the \emph{γ
+↓}0 (zero-mass) limit of (1.1).
+
+\textbf{Proposition 1.} \emph{Let} (\emph{Xγ, Vγ}) \emph{be the Langevin
+dynamic} (1.3)\emph{. Assume that the initial condition}
+(\emph{Xγ}0\emph{, V γ}0) \emph{are independent of γ, set at}
+(\emph{X}0\emph{, V}0) \emph{with}
+E{[}\emph{\textbar X}0\emph{\textbar{}}2+
+\emph{\textbar V}0\emph{\textbar{}}2{]} \emph{\textless{} ∞, and that σ
+̸}= 0 \emph{and ∇f is Lipschitz-continuous. Then for all finite
+time-horizon T, γ ≤}1 \emph{and integer p ≥}1\emph{,}\\
+\emph{t−X}0 \emph{t\textbar{}}2\emph{p}{]} = \emph{O}(\emph{γp}) (3.4)
+\emph{t∈}{[}0\emph{,T} {]}E{[}\emph{\textbar Xγ}
+
+\emph{where X}0\emph{is the solution to}
+\end{quote}\strut
+\end{minipage \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{Moreover,}
+\end{quote}
+\end{minipage}} & \emph{dX}0 \emph{t}= \emph{−∇f}(\emph{X}0 \emph{t})
+\emph{dt} + \emph{σdWt,} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{X}0 0= \emph{X}0\emph{.}
+\end{quote}
+\end{minipage} & (3.5) \\
+&
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.5000} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+E{[} max \emph{t∈}{[}0\emph{,T} {]}\emph{\textbar Xγt−X}0
+\emph{t\textbar{}}2{]} = \emph{O}(\emph{γ}1\emph{/}2)\emph{.}
+\end{quote}
+\end{minipage}} & (3.6) \\
+\multicolumn{4}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{1.0000} + 6\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+While the Kramers-Smoluchowski limit is more directly linked to (3.6),
+the proposition is purposely written to emphasize the successive "easy"
+part ((3.4))1and more "tricky" part ((3.6)) of the Kramers-Smoluchowski
+limit. In particular, for \emph{p} = 1, (3.4) is optimal but the
+discrepancy between the rate \emph{O}(\emph{γ}) in (3.4) and the
+\emph{O}(\emph{γ}1\emph{/}2) in (3.6), although reflecting the cost
+between time marginal and max-in-time mean-square distance (which may be
+significant), is rather non-intuitive. The demonstration of (3.6) might
+be so subject to some proof refinements.
+
+To do (09/10):\\
+(1) The estimate (3.6) should be extended to larger moment: it is
+expected that a more
+\end{quote}
+
+(2) Extensions to non-Lipschitz force field should be drawn from the
+proof details general asymptotic of the form
+"E{[}max\emph{t∈}{[}0\emph{,T} {]} \emph{\textbar Xγt−X}0
+\emph{t\textbar{}}2\emph{p}{]} = \emph{O}(\emph{γp/}2)" holds.
+
+\begin{quote}
+for (3.4) and (3.6) below. Especially given the objective of applying
+Kramers-Smoluchowski limit to gradient descent methods, the prototypical
+case where \emph{f} is a \emph{C}1convex function or \emph{∇f} is
+double-wells potential must be explored.
+
+\emph{Remark} 2\emph{.} The discrepancy between the rate
+\emph{O}(\emph{γ}) in (3.4) and the \emph{O}(\emph{γ}1\emph{/}2) in
+(3.6) is rather non-intuitive (and is possibly subject from some
+refinements) but reflect the cost between time marginal and max-in-time
+mean-square distance.
+
+\emph{Proof.} As a preliminary, recall that, under the initial and
+Lipschitz conditions of the proposition, each Equations (1.1) and (3.5)
+admit a unique solution with finite second moments at all times. In
+particular, as \emph{∇f} is Lipschitz, \emph{∇f} grows (at most)
+linearly with\\
+\emph{\textbar∇f}(\emph{x})\emph{\textbar{}
+≤\textbar∇f}(0)\emph{\textbar{}} +
+\emph{\textbar∇f\textbar Lip\textbar x\textbar{} ≤}max
+\emph{\textbar∇f}(0)\emph{\textbar, \textbar∇f\textbar Lip} 1 +
+\emph{\textbar x\textbar{} ,} (3.7)
+\end{quote}\strut
+\end{minipage \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+1Stated without proof details in {[}8{]}, bottom of p. 206.
+\end{quote}
+
+3
+
+\begin{quote}
+for \emph{\textbar∇f\textbar Lip} = sup\emph{x̸}=\emph{y
+\sout{\textbar∇}f}(\emph{x})\emph{\sout{−∇}f}(\emph{y})\emph{\sout{\textbar{}}}
+
+\emph{\textbar x−y\textbar{\\
+. Consequently (after some calculations on the SDE (3.5), see e.g.
+{[}4{]}),
+
+we get, for all integer \emph{p ≥}1, \emph{.} max \emph{t∈}{[}0\emph{,T}
+{]}E{[}\emph{\textbar X}0 \emph{t\textbar{}}2\emph{p}{]}
+\emph{\textless{} ∞} (3.8)
+\end{quote}
+
+Proof of (3.4): The limit (3.4) is essentially established by stochastic
+calculus. Define \emph{Ut} = exp\emph{\{γ−}1\emph{t\}Vγ}and applying
+Itô's formula immediately observe that, by Itô's integration by parts
+(see Appendix)
+
+\emph{dUt} = \emph{−γ−}1exp\emph{\{γ−}1\emph{t\}∇f}(\emph{Xγt})
+\emph{dt} + \emph{σγ−}1 exp\emph{\{γ−}1\emph{t\} dWt,}
+
+\begin{quote}
+or equivalently
+
+\emph{t} \emph{t}
+
+\emph{Ut} = \emph{V}0 + \emph{γ−}1
+
+0 exp\emph{\{γ−}1\emph{s\}∇f}(\emph{Xγs}) \emph{ds} + \emph{σγ−}1
+
+0 exp\emph{\{γ−}1\emph{s\} dWs.}
+
+It thus follows that
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{Vγt}= exp\emph{\{−γ−}1\emph{t\}Ut}
+\end{quote}
+\end{minipage} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}∇f}(\emph{Xγs}) \emph{ds} +
+\emph{σγ−}1
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+exp\emph{\{γ−}1(\emph{s −t})\emph{\} dWs,}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+(3.9)
+\end{minipage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+= exp\emph{\{−γ−}1\emph{t\}V}0 + \emph{γ−}1
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+and, further,
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0476}}@{}}
+\toprule()
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.1429} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{Xγt}= \emph{Xγ}0+
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{15}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.7143} + 28\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{Vγsds}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{dWs}
+\end{quote}
+\end{minipage \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.1429} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+= \emph{Xγ}0+
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{15}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.7143} + 28\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+exp\emph{\{−γ−}1\emph{s\} dsV}0
+\end{quote}
+\end{minipage \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.1429} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{−γ−}1
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0952} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{s}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0952} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −r})\emph{\} dr}
+\end{minipage}} &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.1905} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{∇f}(\emph{Xγs}) \emph{ds} + \emph{σγ−}1
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{t}
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{s}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0952} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −r})\emph{\} dr}
+\end{minipage \\
+\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.2857} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+= \emph{Xγ}0+ \emph{γV}0
+\end{minipage}} &
+\multicolumn{14}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.6667} + 26\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+1 \emph{−}exp\emph{\{−γ−}1\emph{t\}}
+\end{quote}
+\end{minipage \\
+\begin{minipage}[b]{\linewidth}\raggedright
++
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.2857} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+1 \emph{−}exp\emph{\{γ−}1(\emph{s −t})\emph{\}}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.0952} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{∇f}(\emph{Xγs}) \emph{ds} + \emph{σ}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 40\tabcolsep) * \real{0.2857} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+1 \emph{−}exp\emph{\{γ−}1(\emph{s −t})\emph{\}}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{dWs.}
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+Comparing the paths of \emph{X} and \emph{X}0, we get
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.0833}}@{}}
+\toprule()
+\multicolumn{2}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.1667} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{Xγt−X}0 \emph{t}= \emph{γV}0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+1 \emph{−}exp\emph{\{−γ−}1\emph{t\}}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
++
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.3333} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{∇f}(\emph{Xγs}) \emph{−∇f}(\emph{X}0 \emph{s}) \emph{ds}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+(3.10)
+\end{minipage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{−}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage \\
+& & &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 22\tabcolsep) * \real{0.4167} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}∇f}(\emph{Xγs}) \emph{ds −σ}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+exp\emph{\{γ−}1(\emph{s −t})\emph{\} dWs,}
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+and, equivalently,
+\end{quote}
+
+\emph{t}
+
+\begin{quote}
+\emph{Xγt−X}0 \emph{t}=
+
+0\emph{∇f}(\emph{Xγs}) \emph{−∇f}(\emph{X}0 \emph{s}) \emph{ds} +
+\emph{γV}0 \emph{−Vγ.}
+\end{quote}
+
+Taking the Euclidean norm \emph{\textbar{} · \textbar{}}, applying the
+triangular inequality, elevating the resulting expression to the power
+2\emph{p} and taking the expectation yields
+
+\emph{t}
+
+\begin{quote}
+E{[}\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2\emph{p}{]}
+\emph{≤}22\emph{p−}1 E \emph{\textbar{}} 0 \emph{∇f}(\emph{Xγs})
+\emph{−∇f}(\emph{X}0 \emph{s}) \emph{ds\textbar{}}2\emph{p} +
+\emph{γ\textbar V}0 \emph{−Vγt\textbar{}} 2\emph{p} (3.11)
+
+Using Hölder's inequality and the Lipschitz condition of \emph{∇f},
+
+\emph{t} \emph{t}
+
+E \emph{\textbar{}} 0 \emph{∇f}(\emph{Xγs}) \emph{−∇f}(\emph{X}0
+\emph{s}) \emph{ds\textbar{}}2\emph{p}
+\emph{≤\textbar∇f\textbar{}}2\emph{p Lipt}2\emph{p−}1
+
+0 \emph{\textbar Xγs−X}0 \emph{s\textbar{}}2\emph{p ds}
+
+Meanwhile, recalling (3.9), we have
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+E{[}\emph{γ}2\emph{p\textbar V}0 \emph{−Vγt\textbar{}}2\emph{p}{]}
+\emph{≤}32\emph{p−}1
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.5000} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{γ}2\emph{p}(1
+\emph{−}exp\emph{\{−γ−}1\emph{t\}})2\emph{p}E{[}\emph{\textbar V}0\emph{\textbar{}}2\emph{p}{]}
++ E
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar{}}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}∇f}(\emph{Xγs})
+\emph{ds\textbar{}}2\emph{p}
+\end{quote}
+\end{minipage \\
+& \begin{minipage}[b]{\linewidth}\raggedright
++ \emph{σ}2\emph{p}E
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar{}}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\} dWs\textbar{}}2\emph{p}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0222}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+4
+\end{quote}
+\end{minipage} &
+\multicolumn{11}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2444} + 20\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+3
+\end{minipage}} &
+\multicolumn{32}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.7111} + 62\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+QUANTITATIVE KRAMERS-SMOLUCHOWSKI LIMIT
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{,}
+\end{minipage \\
+\multicolumn{44}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.9778} + 86\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Adding and subtracting \emph{∇f}(\emph{X}0 \emph{s}), using the
+Lipschitz property of \emph{∇f} and the Jensen inequality, and
+
+observing that exp\emph{\{γ}(\emph{s −t})\emph{\} ≤}1 for all \emph{s
+≤t} yield
+
+\emph{t}
+
+E \emph{\textbar{}} 0 exp\emph{\{γ−}1(\emph{s
+−t})\emph{\}∇f}(\emph{Xγs}) \emph{ds\textbar{}}2\emph{p}
+\end{quote}
+\end{minipage \\
+\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1333} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+= E
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar{}}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}}
+\end{minipage}} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2000} + 16\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{∇f}(\emph{Xγs}) \emph{−∇f}(\emph{X}0 \emph{s})
+\end{minipage}} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0667} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{ds} +
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2000} + 16\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}∇f}(\emph{X}0 \emph{s})
+\end{minipage}} &
+\multicolumn{7}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1556} + 12\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{ds\textbar{}}2\emph{p}
+\end{quote}
+\end{minipage \\
+\multicolumn{10}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2222} + 18\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{≤}22\emph{p−}1\emph{\textbar∇f\textbar{}}2\emph{p Lip}E
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1333} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}2\emph{p ds}
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
++ 22\emph{p−}1E
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{13}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2889} + 24\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{}2\emph{pγ−}1(\emph{s −t})\emph{\}\textbar∇f}(\emph{X}0
+\emph{s})\emph{\textbar{}}2\emph{p ds}
+\end{minipage}} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1333} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{.}
+\end{quote}
+\end{minipage \\
+\multicolumn{44}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.9778} + 86\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Furthermore, according to the property (3.7), we have
+\end{quote}
+\end{minipage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+E
+\end{quote}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{11}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2444} + 20\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s−t})\emph{\}\textbar∇f}(\emph{X}0
+\emph{s})\emph{\textbar{}}2\emph{p ds}
+\end{minipage}} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2000} + 16\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{≤\textbar∇f}(\emph{x})\emph{\textbar{} ≤γ}2\emph{p}max
+\end{minipage}} &
+\multicolumn{10}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2222} + 18\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar∇f}(0)\emph{\textbar{}}2\emph{p,
+\textbar∇f\textbar{}}2\emph{p Lip}
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+1\emph{−}exp\emph{\{−}2\emph{pγ−}1\emph{t\}}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+E
+\end{minipage}} &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0889} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+1+ max 0\emph{≤s≤t\textbar X}0 \emph{t\textbar{}}2\emph{p}
+\end{minipage}}} \\
+\multicolumn{24}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.5333} + 46\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+Finally, using Burkhölder-Davis-Gundy inequality, we have
+\end{minipage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+E
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar{}}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{7}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1556} + 12\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\} dWs\textbar{}}2\emph{p}
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{≤}(2\emph{dp})\emph{p}E
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{11}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2444} + 20\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{}2\emph{γ−}1(\emph{s −t})\emph{\} ds}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{p}
+\end{minipage} &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0889} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+= 2\emph{p−}1(\emph{dp})\emph{pγp}
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+1 \emph{−}exp\emph{\{−}2\emph{γ−}1\emph{t\}}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{p}
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{.}
+\end{quote}
+\end{minipage \\
+\multicolumn{44}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.9778} + 86\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Combining all the above, we first deduce that
+\end{quote}
+\end{minipage \\
+\multicolumn{12}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2667} + 22\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+E{[}\emph{γ}2\emph{p\textbar V}0 \emph{−Vγt\textbar{}}2\emph{p}{]}
+\emph{≤C}
+\end{quote}
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{γ}2\emph{p}E{[}\emph{\textbar V}0\emph{\textbar{}}2\emph{p}{]} +
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\multicolumn{10}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2222} + 18\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}2\emph{p ds} + \emph{γ}
+\end{minipage}} &
+\multicolumn{13}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2889} + 24\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+E{[}1 + max 0\emph{≤s≤t\textbar X}0 \emph{s\textbar{}}2\emph{p}{]} +
+\emph{σ}2\emph{p}
+\end{quote}
+\end{minipage \\
+\multicolumn{44}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.9778} + 86\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+for some constant \emph{C} depending only on \emph{p, d} and \emph{∇f},
+and coming back to (3.11) - and up to a slight
+
+change of the factor \emph{C}, we obtain that, for any \emph{γ ≤}1,
+\end{quote}
+
+\emph{t}
+
+\begin{quote}
+E{[}\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2\emph{p}{]} \emph{≤Cγp} +
+0 E{[}\emph{\textbar Xγs−X}0 \emph{s\textbar{}}2\emph{p}{]} \emph{ds.}
+(3.12)
+
+Using Gronwall's inequality, (3.4) follows.
+
+Proof of (3.6): Before establishing (3.6), let us point out that,
+contrary to some papers (e.g. {[}2{]}), the
+
+limit is so directly deduced from martingale inequalities and needs a
+few careful steps. Coming back to
+
+(\textbf{??}), we deduce that, for all intermediate time-horizon
+\emph{T}0 \emph{∈}(0\emph{, T}{]}
+
+2 \emph{t}
+
+\emph{t∈}{[}0\emph{,T}0{]}\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2
+\emph{≤γ}2 max \emph{t∈}{[}0\emph{,T}0{]} 1
+\emph{−}exp\emph{\{−γ−}1\emph{t\ \emph{\textbar V}0\emph{\textbar{}}2+
+2 max \emph{t∈}{[}0\emph{,T}0{]} 0 \emph{Xγs−X}0 2\emph{ds}
+\end{quote}
+
+\emph{t}
+
+\begin{quote}
+\emph{−}2\emph{σ} min \emph{t∈}{[}0\emph{,T}0{]} 0
+exp\emph{\{γ−}1(\emph{s −t})\emph{\ \emph{Xγs−X}0 \emph{· dWs}
+\end{quote}
+
+\emph{t}
+
+\begin{quote}
++ 2 max
+
+\emph{t∈}{[}0\emph{,T}0{]} 0 exp\emph{\{γ−}1(\emph{s −t})\emph{\}} max
+\emph{\textbar∇f}(0)\emph{\textbar{}}2\emph{, \textbar∇f\textbar{}}2
+\emph{Lip\textbar{}} 1 + \emph{\textbar X}0 \emph{s\textbar{}} 2
+\emph{ds}
+\end{quote}
+
+\emph{γσ}2
+
+\begin{quote}
++ max
+
+\emph{t∈}{[}0\emph{,T}0{]} 2 1
+\emph{−}exp\emph{\{−}2\emph{γ−}1\emph{t\}}
+\end{quote}
+\end{minipage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+for
+\end{minipage}} &
+\multicolumn{12}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2667} + 22\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{≤βγT}0+ 2
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{T}0
+\end{minipage}} &
+\multicolumn{12}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2667} + 22\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}2 \emph{ds −}2\emph{σ} min
+\emph{t∈}{[}0\emph{,T}0{]}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}}
+\end{minipage}} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0667} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{Xγs−X}0
+\end{quote}
+\end{minipage}} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1333} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{· dWs}
+\end{quote}
+\end{minipage}}} \\
+& & & & & & & & & & & & & & & & & & & & & & & & & & & & &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0889} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+1 + \emph{\textbar X}0 \emph{s\textbar{}}
+\end{minipage}} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1111} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+2 \emph{ds} + \emph{γσ}2 2\emph{.}
+\end{quote}
+\end{minipage}}} \\
+\multicolumn{16}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.3556} + 30\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{βγt}:= \emph{γ}2\emph{\textbar V}0\emph{\textbar{}}2 + 4\emph{γ}
+max
+\end{minipage}} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2000} + 16\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar∇f}(0)\emph{\textbar{}}2\emph{, \textbar∇f\textbar{}}2
+\emph{Lip\textbar{}}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0444} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}}} \\
+\multicolumn{25}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.5556} + 48\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Taking the expectation of the last inequality gives
+\end{quote}
+\end{minipage \\
+\multicolumn{43}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.9556} + 84\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{T}0 \emph{t}
+
+E{[} max \emph{t∈}{[}0\emph{,T}0{]}\emph{\textbar Xγt−X}0
+\emph{t\textbar{}}2{]} \emph{≤}E{[}\emph{βγT}0{]} + 2
+\end{quote}
+
+0
+
+\begin{quote}
+E \emph{\textbar Xγs−X}0 \emph{s\textbar{}}2 \emph{ds −}2\emph{σ}E
+\emph{t∈}{[}0\emph{,T}0{]} min
+
+0 exp\emph{\{γ−}1(\emph{s −t})\emph{\ \emph{Xγs−X}0 \emph{· dWs}
+
+At this stage, a simple upper-bound of order \emph{γ} can be derived for
+E{[}\emph{βγT}0{]} (see below) and the main
+
+technical lies with the handling of the remaining "stochastic integral"2
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{.}
+\end{quote}
+\end{minipage} \\
+\multicolumn{12}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2667} + 22\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{Iγt}:=
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{8}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1778} + 14\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+exp\emph{\{γ−}1(\emph{s −t})\emph{\}}
+\end{minipage}} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.0667} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{Xγs−X}0
+\end{minipage}} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.1333} + 10\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{· dWs,}
+\end{quote}
+\end{minipage}} &
+\multicolumn{13}{>{\raggedright\arraybackslash}p{(\columnwidth - 88\tabcolsep) * \real{0.2889} + 24\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{t ≥}0\emph{.}
+\end{quote}
+\end{minipage \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+2The exact terminology should rather be stochastic convolution.
+\end{quote}
+
+5
+
+Introducing the process (\emph{Lγt}:= 0
+
+\emph{t}
+
+\begin{quote}
+\emph{Xγs−X}0 \emph{· dWs})\emph{t≥}0, \emph{Iγ}writes as
+
+\emph{Iγt}= exp\emph{\{−γ−}1\emph{t\}Lγt, t ≥}0\emph{,}
+\end{quote}
+
+and it can be observed (by Itô's integration by parts) that \emph{Iγ}is
+also solution to the SDE:
+
+\begin{quote}
+\emph{dIγt}= \emph{−γ−}1\emph{Iγtdt} + \emph{dLγt, t ≥}0\emph{, I}0 =
+0\emph{.}
+\end{quote}
+
+By Itô's formula, this specifically yields
+
+\begin{quote}
+\emph{d\textbar Iγt\textbar{}}2 = 2\emph{IγtdIγt}+ \emph{d⟨Iγ⟩t}=
+\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2
+\emph{−}2\emph{γ−}1\emph{\textbar Iγt\textbar{}}2 \emph{dt} +
+2\emph{IγtdLγt,}
+\end{quote}
+
+and further
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 18\tabcolsep) * \real{0.1000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Iγt\textbar{}}2 + 2\emph{γ−}1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Iγt\textbar{}}2 \emph{ds} =
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2 \emph{ds} + 2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{IγsdLγ}
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+Therefore, for all \emph{T}0 \emph{≤T},
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 14\tabcolsep) * \real{0.1250}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+E{[} max \emph{t∈}{[}0\emph{,T}0{]}\emph{\textbar Iγt\textbar{}}2{]}
+\emph{≤}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{T}0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+E{[}\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2{]} \emph{dt} + 2E
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+max\\
+\emph{t∈}{[}0\emph{,T}0{]}\strut
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{IγsdLγ}
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+where, applying successively the Cauchy-Schwarz and
+Burkhölder-Davis-Gundy inequality,
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0263}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+E
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+max\\
+\emph{t∈}{[}0\emph{,T}0{]}\strut
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0789} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{IγsdLγ}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{≤}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+E
+\end{minipage} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0789} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+max\\
+\emph{t∈}{[}0\emph{,T}0{]}\strut
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0789} + 4\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{IγsdLγ}
+\end{minipage}} &
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1053} + 6\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+21\emph{/}2
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{≤}2
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+E
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{T}0
+\end{minipage} &
+\multicolumn{8}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2105} + 14\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{\textbar Iγs\textbar{}}2\emph{\textbar Xγs−X}0
+\emph{s\textbar{}}2\emph{ds}
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+1\emph{/}2
+\end{minipage} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}@{}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+(3.13)
+\end{minipage \\
+\midrule()
+\endhead
+\multicolumn{19}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.5000} + 36\tabcolsep}}{%
+According to Jensen's inequality, E{[}max\emph{t∈}{[}0\emph{,T}0{]}
+\emph{\textbar Iγt\textbar{}}2{]} \emph{≥} &
+\multicolumn{10}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2632} + 18\tabcolsep}}{%
+E{[}max\emph{t∈}{[}0\emph{,T}0{]} \emph{\textbar Iγt\textbar{}}{] & 2
+&
+\multicolumn{8}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2105} + 14\tabcolsep}@{}}{%
+and so} \\
+\multicolumn{4}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1053} + 6\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+E{[} max \emph{t∈}{[}0\emph{,T}0{]}\emph{\textbar Iγt\textbar{}}{]}
+\end{quote}
+\end{minipage}} & 2 & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{≤}
+\end{quote}
+\end{minipage} & 0 & \emph{T}0 &
+\multicolumn{8}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2105} + 14\tabcolsep}}{%
+E{[}\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2{]} \emph{dt} + 2} & E & 0
+&
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\emph{T}0} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2368} + 16\tabcolsep}}{%
+\emph{\textbar Iγs\textbar{}}2\emph{\textbar Xγs−X}0
+\emph{s\textbar{}}2\emph{ds} &
+\multicolumn{9}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2368} + 16\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1\emph{/}2
+\end{quote}
+\end{minipage \\
+\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1579} + 10\tabcolsep}}{%
+\emph{≤ & 0} & \emph{T}0 &
+\multicolumn{7}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1842} + 12\tabcolsep}}{%
+E{[}\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2{]} \emph{dt} +} &
+\emph{√} & 2 & 0 & \emph{T}0 &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+E} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1579} + 10\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{v∈}{[}0\emph{,s}{]}\emph{\textbar Iγ}max \emph{v\textbar{}}4
+\end{quote}
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{ds} +
+\end{quote}
+\end{minipage}} & 0 &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\emph{T}0} & E &
+\multicolumn{3}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0789} + 4\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}4
+\end{quote}
+\end{minipage}} & \emph{ds} &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1\emph{/}2
+\end{quote}
+\end{minipage} \\
+\multicolumn{38}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{1.0000} + 74\tabcolsep}@{}}{%
+using the inequality: for all \emph{a, b ∈}R, \emph{ab
+≤}1\emph{/}2(\emph{a}2+ \emph{b}2). and taking the square of (3.13), we
+deduce that \emph{f}(\emph{t}) := E{[}max\emph{s∈}{[}0\emph{,t}{]}
+\emph{\textbar Iγs\textbar{}}{]} 4 satisfies an inequality of the form:
+for all 0 \emph{≤T}0 \emph{≤T \\
+\multicolumn{20}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.5263} + 38\tabcolsep}}{%
+\emph{f}(\emph{T}0) \emph{≤Jγ}(\emph{T}0) + 4} & 0 & \emph{T}0 &
+\multicolumn{16}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.4211} + 30\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{f}(\emph{s}) \emph{ds}
+\end{quote}
+\end{minipage \\
+\multicolumn{13}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.3421} + 24\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+2
+
+for \emph{Jγ}(\emph{t}) = 4 0
+
+\emph{T}0
+
+\begin{quote}
+E \emph{\textbar Xγs−X}0 \emph{s\textbar{}}2 \emph{ds} +
+\end{quote}
+
+that \emph{f}(\emph{T}0) \emph{≤Jγ}(\emph{T}0)
+exp\emph{\{}4\emph{T}0\emph{\}} and further
+\end{minipage}} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{T}0 0
+\end{quote}
+\end{minipage}} & E &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1579} + 10\tabcolsep}}{%
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}4} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\emph{ds} &
+\multicolumn{14}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.3684} + 26\tabcolsep}@{}}{%
+. Using Gronwall's inequality, it follows} \\
+\multicolumn{17}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.4474} + 32\tabcolsep}}{%
+E{[} max \emph{t∈}{[}0\emph{,T}0{]}\emph{\textbar Iγt\textbar{}}{]}
+\emph{≤}(\emph{Jγ}(\emph{T}0))1\emph{/}4 exp\emph{\{T\} ≤ &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\emph{√}2} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+0} & \emph{T}0 & E &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1579} + 10\tabcolsep}}{%
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}4} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+\emph{ds} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+1\emph{/}4} &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1316} + 8\tabcolsep}@{}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+exp\emph{\{T}0\emph{\}.}
+\end{quote}
+\end{minipage \\
+\multicolumn{38}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{1.0000} + 74\tabcolsep}@{}}{%
+Coming back to the initial estimate on E{[}max\emph{t∈}{[}0\emph{,T}0{]}
+\emph{\textbar Xγt−X}0 \emph{t\textbar{}}2{]}, we get} \\
+\multicolumn{10}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.2632} + 18\tabcolsep}}{%
+E{[} max \emph{t∈}{[}0\emph{,T}0{]}\emph{\textbar Xγt−X}0
+\emph{t\textbar{}}2{]} \emph{≤}E{[}\emph{βγT}0{]} + 2} & 0 & \emph{T}0 &
+E &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1579} + 10\tabcolsep}}{%
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}2
+\end{quote}
+\end{minipage}} &
+\multicolumn{6}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1579} + 10\tabcolsep}}{%
+\emph{ds} + 2\emph{√}2\emph{σ} &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}}{%
+0} & \emph{T}0 & E &
+\multicolumn{5}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.1316} + 8\tabcolsep}}{%
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}4} & \emph{ds} & 1\emph{/}4 &
+\multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 74\tabcolsep) * \real{0.0526} + 2\tabcolsep}@{}}{%
+exp\emph{\{T}0\emph{\}. \\
+\bottomrule()
+\end{longtable}
+
+Given \emph{γ ≤}1, E{[}\emph{βγ}(\emph{t}){]} \emph{≤Cγ} and according
+to (3.4),
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0769}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{T}0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+E
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{ds ≤Cγ,}
+\end{quote}
+\end{minipage} &
+\begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{T}0
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+E
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{\textbar Xγs−X}0 \emph{s\textbar{}}4
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\emph{ds}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+1\emph{/}4
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\emph{≤Cγ}1\emph{/}2\emph{.}
+\end{quote}
+\end{minipage}} &
+\begin{minipage}[b]{\linewidth}\raggedright
+□
+\end{minipage \\
+\multicolumn{5}{@{}>{\raggedright\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.3846} + 8\tabcolsep}}{%
+\begin{minipage}[b]{\linewidth}\raggedright
+With this, the rate \emph{O}(\emph{γ}1\emph{/}2) leading to (3.12)
+follows.
+\end{minipage \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+6
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+4
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+QUANTITATIVE KRAMERS-SMOLUCHOWSKI LIMIT
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\textbf{4. Appendix.}
+
+\textbf{Gronwall's lemma}: Let \emph{f, α, g} be three scalar functions,
+all defined on a certain interval {[}0\emph{, T}{]} and
+
+which are such that
+
+\emph{t}
+
+\begin{quote}
+\emph{∀t ∈}{[}0\emph{, T}{]}\emph{, f}(\emph{t}) \emph{≤g}(\emph{t}) + 0
+\emph{α}(\emph{s})\emph{f}(\emph{s}) \emph{ds.}
+\end{quote}
+
+Then if \emph{g} is non-decreasing and \emph{α ≥}0, we have
+
+\emph{t}
+
+\begin{quote}
+\emph{∀t ∈}{[}0\emph{, T}{]}\emph{, f}(\emph{t}) \emph{≤g}(\emph{t}) exp
+0 \emph{α}(\emph{s}) \emph{ds} \emph{.}
+\end{quote}
+
+\textbf{Covariations/Crossvariation process and quadratic variation}:
+Assume that \emph{X} and \emph{Y} are two
+
+real-valued continuous semi-martingales given by:
+
+\begin{quote}
+\emph{Xt} = \emph{X}0 + \emph{MX t}+ \emph{AX t,} \emph{Yt} = \emph{X}0
++ \emph{MY t}+ \emph{AY t, t ≥}0\emph{,}
+\end{quote}
+
+with \emph{MX}and \emph{MY}being the respective martingale parts of
+\emph{X} and \emph{Y} and \emph{AX}and \emph{AY}the finite variation
+
+parts. Then the covariation (crossvariation) process of \emph{X} and
+\emph{Y} is the stochastic process \emph{⟨X, Y ⟩}=
+
+(\emph{⟨X, Y ⟩t})\emph{t≥}0 defined at all time \emph{t} by
+
+\emph{N−}1
+
+\begin{quote}
+\emph{⟨X, Y ⟩t} = \emph{\textbar ti}+1\emph{−ti\textbar→}0 lim sup
+
+\emph{k}=0 \emph{Xtk}+1 \emph{−Xtk Ytk}+1 \emph{−Ytk .}
+\end{quote}
+
+The particular process \emph{⟨X⟩}= \emph{⟨X, X⟩}corresponds to the
+quadratic variation process of \emph{X}.
+
+\textbf{Itô's integration by parts}: Let (\emph{Xt}; \emph{t ≥}0) and
+(\emph{Yt}; \emph{t ≥}0) be two continuous semi-martingales. Then
+
+a.s., for all \emph{t ≥}0, \emph{t t}
+
+\begin{quote}
+\emph{XtYt} = \emph{X}0\emph{Y}0 +
+
+0\\
+\emph{Xs dYs} +
+
+0 \emph{Ys dXs} + \emph{⟨X, Y ⟩t.}
+\end{quote}
+
+In the particular case where \emph{Xt} =
+
+processes, the above gives: 0\emph{σs dWs} and \emph{Yt} = 0\emph{bs ds}
+with \emph{σ} and \emph{b} integrable \emph{Ft}-adapted
+
+\begin{quote}
+\emph{t t}
+\end{quote}
+
+\emph{XtYt} =
+
+\begin{quote}
+0\\
+\emph{Xsbs ds} +
+\end{quote}
+
+0
+
+\begin{quote}
+\emph{Ysσs dWs, t ≥}0\emph{.}
+\end{quote}
+
+\textbf{Itô's formula for general semi-martingale processes}: Let
+(\emph{Xt}; \emph{t ≥}0) be a R\emph{d}-valued continuous
+semi-martingale with the decomposition:
+
+\emph{Xt} = \emph{X}0 + \emph{Mt} + \emph{At, t ≥}0\emph{,}
+
+where \emph{M} is a martingale and \emph{A} a càdlàg process with finite
+variations. Then, for all scalar function
+
+\emph{f} : {[}0\emph{, T}{]} \emph{×} R\emph{d→}R, satisfying the
+following properties:
+
+\emph{•} for all \emph{x}, \emph{t →f}(\emph{t, x}) is differentiable
+and the partial derivative (\emph{t, x}) \emph{→∂tf}(\emph{t, x}) is
+continuous,
+
+\emph{•} for all \emph{t}, \emph{x →f}(\emph{t, x}) is twice
+continuously differentiable on R\emph{d}and, for all 1 \emph{≤i, j ≤d}
+(\emph{t, x}) \emph{→∂}2 \emph{xixjf}(\emph{t, x}) is continuous,
+
+it holds
+
+\begin{quote}
+\emph{f}(\emph{t, Xt}) = \emph{f}(0\emph{, X}0) +
+
+0\\
+\emph{∂sf}(\emph{s, Xs}) \emph{ds} +
+
+\emph{i} 0 \emph{∂xif}(\emph{s, Xs}) \emph{dXi s}+ 1 2
+
+\emph{i,j} 0 \emph{∂}2 \emph{xixjf}(\emph{s, Xs}) \emph{d⟨Xi, Xj⟩s.}
+
+\emph{t t} \emph{t}
+\end{quote}
+
+\textbf{Equivalent formulation}: For \emph{∇f} the gradient of \emph{f},
+\emph{∇}2 \emph{xf} the Hessian of \emph{f} and \emph{⟨X, X⟩t}the
+\emph{d × d}
+
+covariation matrix of \emph{X} (i.e. \emph{⟨X, X⟩}(\emph{i,j}) =
+\emph{⟨Xi, Xj⟩t})
+
+\emph{f}(\emph{t, Xt})
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0667}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+= \emph{f}(0\emph{, X}0) +
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{∂sf}(\emph{s, Xs}) \emph{ds} +
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{∇xf}(\emph{s, Xs}) \emph{dMs} +
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{∇xf}(\emph{s, Xs}) \emph{dAs} + 1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{t}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Trace
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{∇}2 \emph{xf}(\emph{s, Xs}) \emph{d⟨X, X⟩s}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\emph{.}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+(this formulation particularly yields: under some general assumptions,
+the transformation \emph{f}(\emph{t, Xt}) of a
+
+semi-martingale remains a semi-martingale.)
+
+7
+
+\textbf{References.}
+
+\begin{quote}
+{[}1{]} X. Cheng, N. S. Chatterji, P. L. Bartlett and M. I. Jordan,
+Underdamped Langevin MCMC: A non-asymptotic analysis, Proceedings of the
+31st Conference On Learning Theory, PMLR 75:300-323, 2018.
+
+{[}2{]} M. Freidlin, Some remarks on the Smoluchowski-Kramers
+approximation, Journal of Statistical Physics, 117, 3/4: 617-634, 2004.
+
+{[}3{]} S. Hottovy, A. McDaniel, J. Wehr and G. Volpe, The
+Smoluchowski-Kramers limit of Stochastic Differential Equations with
+arbitrary state-dependent friction, Commun. Math. Phys. 336: 1259--1283,
+2015.
+
+{[}4{]} I. Karatzas and S. E. Shreve, Brownian motion and Stochastic
+Calculus, Springer, Second Edition, 1991.
+
+{[}5{]} P. Langevin, "Sur la théorie du mouvement brownien {[}On the
+Theory of Brownian Motion{]}". C. R. Acad. Sci. Paris. 146: 530--533,
+1908.
+
+{[}6{]} G. Naldi, L. Pareschi, and G. Toscani (eds), Mathematical
+Modeling of Collective Behavior in Socio-Economic and Life Sciences. In
+Socio-Economic and Life Sciences, Birkhauser, Boston, 2010.
+
+{[}7{]} L. Pareschi and G. Toscani, Giuseppe , Interacting Multiagent
+Systems: Kinetic equations and Monte Carlo methods, Oxford University
+Press, 2013.
+
+{[}8{]} G. A. Pavliotis, Stochastic Processes and Applications:
+Diffusion Processes, the Fokker-Planck and Langevin Equations, Springer
+2014.
+\end{quote}
+
+\end{document}

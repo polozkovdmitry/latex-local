@@ -1,7 +1,7 @@
 {
     "latex-workshop.latex.autoBuild.run": "onFileChange",
     "latex-workshop.latex.clean.enabled": true,
-    "latex-workshop.latex.outDir": "%DIR%/build",
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/build/auto/%DOCFILE%",
     "latex-workshop.latex.recipe.default": "latexmk (xelatex)",
     "latex-workshop.latex.recipes": [
       {
@@ -13,6 +13,10 @@
       {
         "name": "latexmk-xe",
         "command": "latexmk",
+        "env": {
+          "TEXINPUTS": "./:${workspaceFolder}/shared//:${workspaceFolder}/shared/templates//:",
+          "BIBINPUTS": "./:"
+        },
         "args": [
           "-xelatex",
           "-synctex=1",
@@ -24,4 +28,3 @@
       }
     ]
   }
-  

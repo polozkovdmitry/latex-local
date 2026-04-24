@@ -1,0 +1,907 @@
+\documentclass[12pt]{article}
+\input{preamble-article}
+
+% Override geometry for thesis (wide right margin for annotations)
+\geometry{
+    left=2cm,
+    right=6cm,
+    top=2cm,
+    bottom=2cm,
+    bindingoffset=0cm
+}
+
+\graphicspath{{figures/}}
+
+
+\begin{document}
+
+\hfill
+% \todayYYMMDD
+\begin{center}
+% \section*{Курс ``МНИС 2025/25''. \\Эссе}
+\textit{Comparison study of overdamped and underdamped Langevin algorithms.}\\
+% \textit{Крайний срок сдачи - 17 декабря 2024 г., 23:59}\\
+\textit{Author: Polozkov Dmitrii (Полозков Дмитрий);}\\
+\textit{Supervisor: Dr. Jabir Jean-François;}\\
+\textit{Date: 15 June 2025.}
+\end{center}
+
+% \todo[inline, color=lightgray]{
+% TODO:\\
+% ---tbd conventions---\\
+% \ding{51} be cool\\
+% \ding{51} '???' is for future research\\
+% \ding{51} it's -> it is\\
+% \ding{51} double dollar sign for the equation (instead of [ ]) is when im not sure whether it should be inline\\
+% \bigskip
+% ---definitely---\\
+
+% \ding{55} add github\\
+% \ding{55} short intros before any section/subsection\\
+% \ding{55} space and ./, in formulas \\
+% \ding{51} re read every formula from automatic \\
+% \ding{51}! - - - instead of emdash\\
+% \ding{51} my -> our?\\
+% \ding{51} Kramers--Smoluchowski\\
+% \ding{51} the auto corrects\\
+% \ding{51}! кавычки\\
+% \ding{51}! add emph\\
+% \ding{51} сокращние trace back to the first use\\
+% \bigskip
+% ---maybe---\\
+% \ding{51} all \texttt{labels} used from?\\
+% \ding{55} textcolor singuar objects\\
+% \ding{55} add euler and EM recap\\
+% \ding{55} add paragraph with double reversed // там сям (i.e. without the paragraph title)\\
+% \ding{55} 'the' before things named after a person\\
+% }
+\tableofcontents
+\newpage
+
+\section{Introduction}
+Stochastic optimization is commonly used for solving large-scale optimization problems.
+Unlike deterministic methods, which rely on computing the full gradient, \emph{stochastic optimization} uses random subsets of data to update model parameters, making the procedure computationally efficient and scalable.
+
+Today, various optimization schemes exist, each addressing different aspects of the objective function.
+Sometimes, the choice is made based solely on heuristic evidence due to a complicated nature of the problem.
+For example, sophisticated neural network (NN) architectures do not possess any regularity properties required for theoretical guarantees on convergence.
+Yet, certain algorithms are proven to be robust in estimating these sort of models.
+
+Due to the high expressiveness of NNs---their ability to 'understand' and generalize data---these models have gained widespread adoption across various domains:
+\begin{itemize}
+    \item in natural sciences, NNs are used to simulate the behaviour of various physical phenomena, analyze large astronomical datasets, predict and design chemical reactions, monitor satellite imagery, and model climate change;
+    \item in social sciences, researchers apply them for macroeconomic forecasting, sentiment analysis of social media data, migration flow forecasting, public policy modelling, and behavioural studies;
+    \item in industry, Big Tech companies use NNs for quality control, process automation, content recommendation, search engine improvement, and---perhaps one of the most prominent modern technologies---natural language processing;
+    \item in healthcare, NNs assist doctors in diagnosing diseases, discovering new drugs, patient monitoring, performing surgeries, and more.
+\end{itemize}
+
+Importantly, everything above relies on the efficient estimation of parameters for these models (a procedure called training the model).\\
+
+Hopefully, it is now apparent how both \emph{theoretical} and \emph{empirical} analyses of stochastic optimization algorithms are fundamental for their applicability in real-world scenarios.
+
+\section{Setup}
+The most general formulation of the problem studied in this text involves iteratively minimizing a differentiable\footnote{through the text, other assumptions are imposed} real-valued function $V(\theta)$ with inputs in $\R^d$.
+In this context, inputs are often called parameters.
+Unless stated otherwise, the following notation is used throughout this document:
+
+\begin{itemize}
+    % General dimensions and indexing
+    \item $d$: the dimensionality of the input space or feature vectors;
+    \item $\ell$: the number of data points in a dataset, i.e., the number of rows in the data matrix $X \in \mathbb{R}^{\ell \times d}$;
+    \item $N$: the total number of iterations performed in an algorithm or process;
+    \item $n$: the index of a particular iteration, where $1 \le n \le N$;
+
+    % Function properties
+    \item $L$: the Lipschitz constant of a function or its gradient;
+    \item \textbf{Lipschitz continuity}: A function $f$ is called $L$-Lipschitz continuous if for all $x, y$ in its domain,
+    \[
+        \|f(x) - f(y)\| \le L \|x - y\|.
+    \]
+    If $f \in C^2$ (twice continuously differentiable), then $f$ has an $L$-Lipschitz gradient if for all $x, y$,
+    \[
+        \|\nabla f(x) - \nabla f(y)\| \le L \|x - y\|.
+    \]
+
+    \item $\mu$: the \textit{strong convexity constant} of a differentiable function $f$. If $f$ is $\mu$-strongly convex, then for all $x, y$,
+    \[
+        f(y) \ge f(x) + \langle \nabla f(x), y - x \rangle + \frac{\mu}{2} \|y - x\|^2;
+    \]
+
+    \item $\kappa$: the \textit{condition number} of a differentiable function $f : \mathbb{R}^d \to \mathbb{R}$, defined as $\kappa = \frac{L}{\mu}$ for functions with $L$-Lipschitz gradient and $\mu$-strong convexity. It characterizes the convergence behaviour of optimization methods; smaller values of $\kappa$ imply better conditioning and faster convergence.
+
+    % Matrix / linear algebra
+    \item $I_{d \times d}$: the $d$-dimensional identity matrix;
+    \item $A^T$: the transpose of matrix $A$, i.e., $(A^T)_{ij} = A_{ji}$;
+
+    % Asymptotics
+    \item \textbf{Big-$\mathcal{O}$ notation}: $g(x) = \mathcal{O}(f(x))$ as $x \to \infty$ means there exists a constant $c > 0$ and a value $x_0$ such that for all $x \ge x_0$,
+    \[
+        |g(x)| \le c f(x);
+    \]
+    \item \textbf{Big-$\Theta$ notation}: $g(x) = \Theta(f(x))$ as $x \to \infty$ means there exist constants $c_1, c_2 > 0$ and a value $x_0$ such that for all $x \ge x_0$,
+    \[
+        c_1 f(x) \le |g(x)| \le c_2 f(x);
+    \]
+\end{itemize}
+
+
+
+Below, all expressions important for understanding of the text are presented in the $\texttt{boxed}$ environment.
+
+
+\section{Literature Review}
+\label{literature review}
+
+Training modern neural networks (NNs) is an instance of \emph{large‐scale stochastic optimization}: one repeatedly updates parameters \(\theta\in\R^{d}\) in order to minimize a smooth loss \(V(\theta)\).  Because \(\ell\) can be enormous---public benchmarks already exceed \(1.3\times10^{12}\) samples \cite{she24}---any realistic algorithm must keep per‐iteration cost well below \(\ell\).
+
+The most direct procedure is gradient descent (GD).  With a stepsize schedule \(\varepsilon_{n}>0\) it performs
+\[
+\theta_{n+1}=\theta_{n}-\varepsilon_{n}\nabla V(\theta_{n}),
+\]
+where popular schedules include a constant step \(\varepsilon_{n}=h\), a decreasing one such as \(\varepsilon_{n}=1/n\), or even the greedy choice
+\[
+\varepsilon_{n}(\theta) = \arg\min_{h>0} \left\{ V\left(\theta - h \nabla V(\theta)\right) \right\}.
+\]
+If \(V\) is twice continuously differentiable and strongly convex, GD achieves an \(\bigO(1/N)\) convergence rate in objective value, but its speed deteriorates with the condition number of \(V\) \cite{bv04}.  Moreover, computing each full gradient costs \(\Theta(\ell)\) operations, so for today's data sizes GD is often infeasible.
+
+\paragraph{Stochastic gradients.}
+\label{para: Stochastic gradients}
+To overcome this cost Robbins and Monro introduced \emph{stochastic approximation} \cite{rm51}.  Their method replaces the true gradient with an unbiased estimator based on a single random data point, reducing the cost of one update from \(\Theta(\ell)\) to \(\Theta(1)\).  For a \(\mathcal C^{2}\) strongly convex objective the procedure converges in expectation at rate \(\bigO(1/N)\) \cite{njl09}; for merely convex objectives the best attainable rate is \(\bigO(1/\sqrt{N})\) \cite{ny83}.  Rosenblatt's perceptron paper \cite{r58} applied this idea in machine learning, pioneering the field of stochastic gradient descent (SGD) for NN training.
+
+Notably, SGD not only reduces computational costs, but also relaxes some of the assumptions required for convergence compared to classical GD.
+Modern SGD formulation requires only Lipschitz continuity of the gradient for sublinear convergence results \cite{bubeck2015convex, bottou2018optimization}. This broader applicability makes SGD particularly valuable for large-scale and non-convex problems commonly encountered in modern machine learning (ML) and NN tasks.
+
+Another key advantage of SGD is its robustness to ill-conditioned or noisy objective landscapes.
+The inherent stochasticity in the gradient updates injects noise into the optimization trajectory, which \emph{remarkably} helps the algorithm escape shallow local minima and saddle points \cite{ge2015escaping, jin2017escape}.
+This property partly explains the empirical success of SGD in training deep NNs, where the objective functions are notoriously non-convex and characterized by poor local optima.
+
+In practice one often uses a \emph{mini‐batch}: instead of a single sample, draw a small random subset and average their gradients.  This makes noise smoother and exploits hardware vectorization \cite{bac97}, which makes training more stable \cite{n17} and enables scalable realtime learning \cite{bottou2010large}.
+Numerous enhancements build on this baseline.  \emph{Momentum} adds a velocity term, letting the iterate roll over shallow valleys like a heavy ball and thus accelerating convergence \cite{rhw86}.  \emph{Adaptive} methods such as AdaGrad \cite{dhs11} and RMSprop \cite{h20} rescale each coordinate by running variance estimates, while Adam\cite{kingma2014adam} and its variants combine both tricks and became the state of the art \cite{ndb19} and are widely used to this day.
+
+\paragraph{Non-convex landscapes.}
+Almost all NN objectives are non-convex and extremely high-dimensional, so classical convergence guarantees fail.
+\cite{mmn18} tackled this by passing to a mean‐field limit: with a single‐layer network under suitable hyperparameter scaling, the discrete SGD iterations exhibit similar convergence behaviour to a partial differential equation (PDE) in measure space.
+This allows to simplify the convergence analysis and guarantee efficient training for this setup.
+Numerical experiments on synthetic data confirm the theory.
+This result suggests similar PDE representations might exist for other optimizers---a hypothesis one can test empirically by replicating \cite{mmn18} with alternative optimizers.
+
+\paragraph{Continuous‐time viewpoint.}
+GD itself can be viewed as an explicit Euler discretization of the \emph{gradient flow} ordinary differential equation (ODE):
+\begin{equation*}
+d\theta_t=-\nabla V(\theta_t)dt.
+\end{equation*}
+Adding isotropic Brownian noise yields the \emph{stochastic gradient flow}:
+\begin{equation}
+\label{eq: OLD aka stochastic gradient flow}
+\boxed{
+d\theta_t=-\nabla V(\theta_t)\,dt+\sigma dW_t,
+}
+\end{equation}
+where \(W_t\) is the standard \(d\)-dimensional Brownian motion and \(\sigma>0\) a noise scale.
+The discrete algorithm obtained by sampling only one data point per step from the law of the solution for \eqref{eq: OLD aka stochastic gradient flow} is exactly SGD, which is commonly referred to as the \textit{overdamped Langevin algorithm} (OLD) in this context.
+One of the techniques for constructing such discrete sequence is the Euler-Maruyama method, which extends the concept of Euler scheme from ODEs to SDEs. \\
+
+More generally, any continuous dynamics with favourable asymptotic can be turned into an algorithm by time discretization, a strategy exploited in both optimization and sampling.
+A notable example is the Langevin family of stochastic differential equations (SDEs) that define a class of second order SDEs characterized by the following (formal) stochastic Newton law
+\[
+\gamma \ddot{X}_t^{\gamma} = F(t, X_t^{\gamma}, \dot{X}_t^{\gamma})\,dt + \sigma(t, X_t^{\gamma}, \dot{X}_t^{\gamma})\,dL_t,
+\]
+defined for $t\ge 0$ hereafter and initialized with $(X_0^\gamma, \dot{X}_0^\gamma)$.
+From a physical point of view, $X^{\gamma}$ models the position of a generic body evolving in $\R^d$, $\dot{X}^{\gamma}$ its velocity, $\gamma$ the inverse of the volumic mass of the body, $F : [0, \infty) \times \R^d \times \R^d \to \R^d$ a external force field and $(L_t)_{t \ge 0}$ a $m$-dimensional stochastic perturbation weighted by an inhomogeneous dispersion matrix $\sigma$ \cite{l08}.
+Langevin dynamics apply in modern science in a wide range of fields, including fluid dynamics, biology, economy, social science (\cite{pt13}, \cite{npt10}) and not so long ago, in artificial intelligence (\cite{ccb18}).
+
+Setting $V^{\gamma} = \dot{X}^{\gamma}$, the above rewrites more rigorously into the $\R^{2d}$-valued system of SDEs:
+\begin{equation}
+\begin{cases}
+dX_t^{\gamma} = V_t^{\gamma} \,dt, \\
+dV_t^{\gamma} = \gamma^{-1} F(t, X_t^{\gamma}, V_t^{\gamma})\,dt + \gamma^{-1} \sigma(t, X_t^{\gamma}, V_t^{\gamma})\,dL_t,
+\end{cases}
+\label{eq: ULD p14 general}
+\end{equation}
+initialized with $(X_0^\gamma, V_0^\gamma)$.
+
+A prototypical instance of \eqref{eq: ULD p14 general} is given by the following setting:
+\begin{equation*}
+\label{eq: - grad f - v}
+L = W, \quad
+F(t, x, v) = -\nabla f(x) - v, \quad
+\sigma(t, x, v) = \sigma I_{d \times d},
+\quad \sigma>0.
+\end{equation*}
+In this situation \eqref{eq: ULD p14 general} writes as
+\begin{equation}
+\label{eq: ULD canonical}
+\boxed{
+\begin{cases}
+dX_t^{\gamma} = V_t^{\gamma} \,dt, \\
+dV_t^{\gamma} = -\gamma^{-1} \left( \nabla f(X_t^{\gamma}) dt + V_t^{\gamma} dt + \sigma dW_t \right)
+\end{cases}
+}
+\end{equation}
+
+Discretizing \eqref{eq: ULD canonical} yields the \emph{underdamped Langevin algorithm} that turns out to  reduce to SGD (the \emph{overdamped} Langevin algorithm) as \(\gamma\downarrow 0\), mirroring the physical distinction between prevailing inertia (underdamped) and viscosity/friction (overdamped) regimes \cite{l08}.
+Rigorously, the Kramers--Smoluchowski limit \cite{f04} states that for any $T>0$ and $X_0^\gamma$, $V_0^\gamma\in\R^d$,
+\[
+\lim_{\gamma\downarrow 0}\max_{t\in[0, T]}|X_t^{\gamma} - X_t^0|=0,
+\]
+where the limit is in probability.
+This result is formalizes the connection between the two regimes, which provides a rigorous foundation for the common practice of substituting second-order (underdamped) SDEs with first-order (overdamped) ones in the study of diffusion and sampling algorithms.
+This method of approximating second-order (underdamped) SDEs with first-order (overdamped) ones is foundational in both statistical physics and the analysis of Markov chain Monte Carlo (MCMC) methods.
+There, it justifies algorithmic simplifications without sacrificing the validity of the resulting invariant measures.
+
+\paragraph{Sampling.}
+\label{par: sampling}
+When the noise level is \(\sigma=\sqrt{2}\), discretizing the above dynamics yields underdamped and overdamped Langevin MCMC for sampling from a target density proportional to \(\exp(-V)\).
+Cheng \cite{c18} compared these two algorithms ($\gamma$ is fixed in the underdamped one) and proved that for smooth, strongly log‐concave targets the underdamped algorithm achieves linear convergence in the Wasserstein distance to the target distribution\footnote{that is, the distribution of the algorithm's iterates approaches the target distribution at an exponential rate when measured using the Wasserstein metric}.
+The constant is \(\sqrt{d}\kappa^{2}\), an improvement over the \emph{overdamped} constant \(d\kappa^{2}\).
+
+Another sampling application is presented in \cite{m19}.
+Authors used a different formulation of the dynamic, which looks as:
+\begin{equation}
+\label{eq: m19}
+\begin{cases}
+d\theta_t = \xi r_t dt, \\
+dr_t = -\nabla U(\theta)dt -\gamma \xi r_tdt + \sqrt{2\gamma} dW_t,
+\end{cases}\quad \theta_0\sim\mathcal N\left(0, \tfrac{1}{L_g}I_{d\times d}\right),
+\end{equation}
+where the potential function $U$ is $L_G$-gradient Lipschitz and $\theta_t, r_t\in\R^d$, $\xi>0$.
+
+Authors applied a particular second-order discretization method to derive a numerical algorithm out of \eqref{eq: m19}. Once again, the parameter $\gamma$, as well as $\xi$ are fixed (although not arbitrary).
+By constructing an appropriate Lyapunov functional for optimizing KL divergence, they were able to prove that their underdamped Langevin algorithm has an accelerated convergence rate compared to the classical overdamped Langevin algorithm.
+The authors even describe it as an analogue of the Nesterov accelerated gradient method in the context of (MCMC)
+
+These findings indicate that algorithms derived from the underdamped dynamics might also outperform SGD in optimization.
+\\
+
+As for other applications, a notable example is presented in \cite{qw20}, where underdamped Langevin dynamics is utilized it to construct approximate gradients for use in SGD updates.
+This approach is motivated by settings where computing unbiased gradient estimates is infeasible.
+While the underdamped algorithm itself is not used directly as an optimizer, it demonstrates how second-order (underdamped) methods can enhance optimization strategies in a broader realm.
+
+It is worth highlighting that \cite{qw20} employs a formulation of that is distinct from both the one in \cite{c18} and the canonical \eqref{eq: ULD canonical}.
+Its derivation from the original physics version in \cite{l08} is not spelled out.\\
+
+Together these contributions motivate a deeper theoretical and empirical comparison of overdamped and underdamped Langevin dynamics---as well as their discrete counterpart---under realistic regularity assumptions.
+
+
+\section{Goals \& Objectives}
+
+Building on the literature above, the present study has three theoretical and one empirical goals:
+
+\begin{enumerate}
+\item \textbf{Unify formulations of underdamped Langevin dynamics.}
+      Multiple sources---physics \cite{l08}, MCMC \cite{c18}, gradient estimators \cite{qw20}---state the dynamics in incompatible formulations.
+      We will reconcile them by mapping each to the canonical form \eqref{eq: ULD canonical} and deriving explicit parameter correspondences.  This comparison will clarify how choices of ``mass'' \(\gamma\), friction, or noise scaling affect optimization behaviour.
+
+% \item \textbf{Clarify the Smoluchowski--Kramers proof.}
+%       Freidlin's arguments involve subtle stochastic calculus and measure estimates; some steps, especially the handling of initial conditions, remain opaque.  We will supply complete derivations, cross‐checking against Pavliotis' rescaling \cite{p14}, and highlight the distinction between marginal and path-wise rates.
+
+\item \textbf{Extend the limit to discrete algorithms.}
+      Practical optimizers use finite step sizes, so a rigorous statement must control both the \(\gamma\to0\) and the time‐discretization errors.  Our aim is to show that for a suitably small stepsize \(h\), the discrete underdamped algorithm converges to its overdamped counterpart with the same rates as in the continuous theory, up to an \(\bigO(h)\) bias that can be made negligible.
+
+\item \textbf{Compare convergence empirically.}
+      We will implement both overdamped and underdamped Langevin algorithms and measure their performance on four test cases:
+      \begin{enumerate}
+        \item Lipschitz continuous functions (quadratic with different $\kappa$ values);
+        \item non-Lipschitz, non-convex functions (double-well potential, Rosenbrock function);
+        \item landscapes with saddle points (hyperbolic paraboloid, Himmelblau function).
+        % \item the synthetic data experiments of \cite{mmn18}.
+      \end{enumerate}
+      Metrics will include objective value versus iterations, gradient norm and weak and strong error rates.
+      Hyperparameters will be tuned identically across methods to isolate the effect of damping.
+\end{enumerate}
+
+% (\textit{ii}) make the Smoluchowski--Kramers approximation fully transparent,
+By meeting these objectives we expect to (\textit{i}) supply a reference mapping between existing Langevin notations,  (\textit{ii}) justify using underdamped variants in optimization theory, and (\textit{iii}) provide practitioners insights on when the extra velocity variable offers a payoff.
+
+\section{Kramers--Smoluchowski continuous error bounds}
+
+In the proposition below, under the prototypical condition \eqref{eq: - grad f - v}, we expand on the Kramers--Smoluchowski $\gamma \downarrow 0$ limit of \eqref{eq: ULD p14 general} by adressing the quantitive bounds on two types of errors.
+
+\begin{proposition}[Continuous Kramers-Smoluchowski weak and strong error bounds]
+\label{prop: KS cont bounds}
+The following is stated without proof details---hence included as \emph{proposition}---in \cite{p14}, page 206.
+Let $(X^{\gamma}, V^{\gamma})$ be the underdamped Langevin dynamic \eqref{eq: ULD canonical}.
+Assume that the initial condition $(X_0^{\gamma}, V_0^{\gamma})$ satisfy $\E|X_0^\gamma|^2 + \E|V_0^\gamma|^2 < \infty$, as well as that $\nabla f$ is Lipschitz.
+Then for all finite time-horizon $T$ and $\gamma \le 1$,
+% and integer $p \ge 1$,
+\begin{equation}
+\label{eq: p14 max E (weak)}
+\boxed{
+% this is proven for general p in jj pdf
+\max_{t \in [0, T]} \E \left[ \left|X_t^{\gamma} - X_t^0\right|_2^2 \right] = \mathcal{O}(\gamma)
+}
+\end{equation}
+where $X^0$ is the solution to the overdamped Langevin dynamics \eqref{eq: OLD aka stochastic gradient flow}, in this case expressed as:
+\[
+dX_t^0 = -\nabla f(X_t^0)\,dt + \sigma dW_t, \quad X_0^0 = X_0.
+\]
+A closely related fact is formulated in \cite{f04}.
+Under the same assumptions and the case of \eqref{eq: ULD canonical}, there exists $c$ defined by $T$, $d$ and the Lipschitz constant K of the drift and diffusion coefficients such that
+\begin{equation}
+\label{eq: f04 strong bound orig}
+\max_{t\in[0, T]}|X_t^{\gamma} - X_t^0|_2^2 \le c\gamma \left(|V_0^\gamma|^2+\|\nabla f(X_t^\gamma)\|_{\infty}+\sigma^2\right).
+\end{equation}
+The justification appears somewhat heuristic and would benefit from further detail.
+\end{proposition}
+
+\begin{remark}
+Assuming \eqref{eq: f04 strong bound orig} holds almost surely, after taking an expectation we can notice  $|V_0^\gamma|^2$, $\|\nabla f(X_t^\gamma)\|_{\infty}$, and $\sigma^2$ are all finite by assumptions\footnote{recall that a differentiable Lipschitz continuous function has bounded derivatives}.
+Hence, by redefining $c$ we conclude that
+\begin{equation}
+\label{eq: f04 E max (strong)}
+    \E\left[\max_{t\in[0, T]}\left|X_t^{\gamma} - X_t^0\right|_2^2\right] \le c\gamma\quad\Longleftrightarrow\quad\boxed{
+    \E\left[ \max_{t \in [0, T]} \left|X_t^{\gamma}\ - X_t^0\right|_2^2 \right] = \mathcal{O}(\gamma)
+    }
+\end{equation}
+\end{remark}
+by definition (treating the left hand side as a function of $\gamma$).
+The object in \eqref{eq: p14 max E (weak)} is referred to as the \emph{weak error}, while that in \eqref{eq: f04 E max (strong)} is known as the \emph{strong error} (i.e., the error in the sense of the expectation of the maximum path-wise deviation over the interval $[0, T]$).
+
+\section{Unification of various scaling}
+
+This part mainly refers to chapter 6 in \cite{p14}.
+It describes the Langevin model as a second order stochastic system describing the motion of a ``particle'' with
+\[
+d\dot{q}_t = -\nabla U(q_t)\,dt - \eta \dot{q}_t\,dt + \sqrt{\frac{2\eta}{\beta}}\,dW_t,
+\]
+where $\{q_t\}_t$ is the position dynamics of the particle and $\{\dot{q}_t\}_t$ the related velocity dynamics\footnote{For notation consistency, the notation of the potential force and the friction coefficient are here denoted by $\nabla U$ and $\eta$ instead of the original $\nabla V$ and $\gamma$ in Equation (6.1) page 181.}.
+Motions are assumed to start at the position $q_0$ and velocity $\dot{q}_0$. To this model, the family of rescaled dynamics is associated:
+\[
+q_t^{\eta} := \lambda_{\eta} q_{t/\mu_{\eta}}.
+\]
+This particular rescaled formulation is used throughout the rest of the chapter.\\
+
+Now we prove that the resulting dynamics is, in fact, no different from the canonical \eqref{eq: ULD canonical}.
+
+Notice that the corresponding velocity $q_t^{\eta}$ is given by $\dot{q}_t^{\eta} = \frac{\lambda_{\eta}}{\mu_{\eta}} \dot{q}_{t/\mu_{\eta}}$, and so
+\[
+\dot{q}_t^{\eta} = \frac{\lambda_{\eta}}{\mu_{\eta}} \dot{q}_0 - \frac{\lambda_{\eta}}{(\mu_{\eta})^2} \int_0^{t/\mu_{\eta}} \nabla U(q_s)\,ds - \frac{\lambda_{\eta}}{\mu_{\eta}} \int_0^{t/\mu_{\eta}} \eta \dot{q}_s\,ds + \frac{\lambda_{\eta}}{\mu_{\eta}} \sqrt{\frac{2\eta}{\beta}} W_{t/\mu_{\eta}}.
+\]
+\[
+= \frac{\lambda_{\eta}}{\mu_{\eta}} \dot{q}_0 - \frac{\lambda_{\eta}}{(\mu_{\eta})^2} \int_0^t \nabla U(q_s^{\eta}/\lambda_{\eta})\,ds - \frac{\lambda_{\eta} \eta}{(\mu_{\eta})^2} \int_0^t \dot{q}_s^{\eta}\,ds + \frac{\lambda_{\eta}}{\mu_{\eta}} \sqrt{\frac{2\eta}{\beta}} W_{t/\mu_{\eta}}
+\]
+Since (see e.g. \cite{ks91}) $(W_{t/\mu_{\eta}})_{t \ge 0} \stackrel{D}{=} (W_{t}/\sqrt{\mu_{\eta}})_{t \ge 0}$, $\dot{q}_t^{\eta}$ can be viewed as solution to the SDE:
+\[
+d\dot{q}_t^{\eta} = -\frac{\lambda_{\eta}}{(\mu_{\eta})^2} \nabla U(q_t^{\eta}/\lambda_{\eta})\,dt - \frac{\eta}{\mu_{\eta}} \dot{q}_t^{\eta}\,dt + \frac{\lambda_{\eta}}{(\mu_{\eta})^{3/2}} \sqrt{\frac{2\eta}{\beta}} dW_t, \quad \dot{q}_0^{\eta} = \frac{\lambda_{\eta}}{\mu_{\eta}} \dot{q}_0.
+\]
+In particular, taking $\lambda_{\eta} = 1$ and $\mu_{\eta} = 1/\eta$, the above writes as
+\[
+d\dot{q}_t^{\eta} = -\eta^2 \nabla U(q_t^{\eta})\,dt - \eta^2 \dot{q}_t^{\eta}\,dt + \eta^2 \sqrt{\frac{2}{\beta}} dW_t, \quad \dot{q}_0^{\eta} = \eta \dot{q}_0.
+\]
+Comparing the above with \eqref{eq: ULD p14 general}, the (friction) coefficient $\eta^2$ corresponds to the mass $\gamma^{-1}$.
+
+Importantly, while the rescaling in \cite{p14} is seemingly coherent with our initial Langevin framework, the impact on the initial velocity seems to have been overlooked: the Kramers--Smoluchowski limit $\gamma \downarrow 0$ or equivalently $\eta \uparrow \infty$ makes $\dot{q}_0^{\eta} = \eta \dot{q}_0$ blow up, which greatly contrasts with the rates \eqref{eq: p14 max E (weak)}, \eqref{eq: f04 E max (strong)}. The initial velocity $\dot{q}_0$ should be redefined as $\dot{q}_0 = V_0/\eta$ for some $V_0 \in \R^d$.
+Doing so, we are now able to rewrite \eqref{eq: ULD canonical} as:
+\begin{equation}
+\label{eq: ULD p14 my}
+\begin{cases}
+dX_t^{\gamma} = V_t^{\gamma} \,dt, \\
+dV_t^{\gamma} = -\nabla f(X_t^{\gamma})dt -\gamma^{-\frac{1}{2}}V_t^{\gamma}dt + \gamma^{-\frac{1}{4}}\sqrt{\sigma} dW_t,
+\end{cases}\quad X_0^\gamma=X_0,\,V_0^\gamma= \sqrt{\gamma}V_0.
+\end{equation}
+with $\eta^2=\gamma^{-1}$ and $\sigma=\sqrt{2/\beta}$.\\
+
+An instant implication is that \eqref{eq: p14 max E (weak)} and \eqref{eq: f04 E max (strong)} both apply to this formulation.
+However, in this case the result is of little to no practical importance since in order for the respective underdamped algorithm to converge to SGD, it would require changing the initialization every time $\gamma^{-1}$ is raised.
+This would make it impossible to gradually switch from an underdamped to an overdamped regime.
+One could argue that since $V_0^\gamma\to 0$ as $\gamma\downarrow 0$, it's practically equivalent to setting the initialization to $0$ from the very start.
+
+Another critical observation is that the time rescaling
+We defer a detailed exploration of discretizing \eqref{eq: ULD p14 my} to future work.
+
+Notably, the above formulation can be further rewritten to match the one from \cite{m19} (spelled out in  \eqref{eq: m19}).
+Namely, one must reassign $\gamma \mapsfrom \gamma^{-\frac{1}{2}}$ and set $\xi=1$ for the SDEs to match exactly, except for the velocity initialization.\\
+
+Now, after successfully unifying different formulations of the underdamped Langevin dynamics, we're ready to proceed to utilizing it (in the canonical form of \eqref{eq: ULD canonical}) in optimization.
+
+\section{Kramers-Smoluchowski discrete bounds}
+
+Proposition \ref{prop: KS cont bounds} is a continuous result, meaning that it describes the convergence bound for a family of continuous dynamics (ULD) that approach another continuous dynamic (OLD).
+To derive an optimization algorithm from a stochastic differential equation, it is necessary to establish convergence bounds for the corresponding discrete-time iterates, which may differ from the convergence properties inherent to the continuous-time SDE.
+
+Now we proceed to doing so.
+In this work the only discretization scheme used is the Euler-Maruyama (EM) scheme with a constant stepsize $h$, and the perturbations source is always the Brownian motion (although more general semi-martingale processes can be considered).
+Denoting $t(n)=nh$, for a $d$-valued SDE of the general form
+\begin{gather}
+    \label{eq: SDE of a general form}
+    dX_t = b(t, X_t, \dot{X}_t)dt + \sigma(t, X_t, \dot{X}_t)dW_t,\quad t\in[0, T]\\
+    \Longleftrightarrow\quad X_{t(n)} = b(t, X_{t(n)}, \dot{X}_{t(n)})dt + \sigma(t(n), X_{t(n)}, \dot{X}_{t(n)})dW_{t(n)},\quad n\in[1, N]\nonumber
+\end{gather}
+let its respective discrete iterate as
+\[
+\{\bar{X}_{t_n}\}_{n=\overline{0...N}}=\left\{\begin{bmatrix}
+    \bar{X}_{t_n}^{(1)} & \bar{X}_{t_n}^{(2)} & \cdots & \bar{X}_{t_n}^{(d)}
+\end{bmatrix}^T\right\}_{n=\overline{0...N}},\quad t_0=0,\,t_k = t_{k-1}+h,\,t_n=T.
+\]
+\paragraph{Variance reduction via shared Brownian noise.}
+Throughout both the theoretical analysis and all numerical experiments, the discretizations of the underdamped and overdamped Langevin dynamics are driven by a \emph{shared} realization of the Brownian motion. That is, the sequence of Brownian increments $\{\Delta W_n\}$ used in the Euler--Maruyama updates is identical for both $\bar{X}_{t_n}^\gamma$ and $\bar{X}_{t_n}^0$ at each step. This coupling is a \emph{standard variance reduction technique} (see, e.g., \cite[Ch. 9]{kloeden1992numerical}) and is crucial for accurately estimating the difference between the two processes. By ensuring that both iterates are subject to the same random perturbations at every timestep, we eliminate the extraneous variance that would otherwise arise from independent noise realizations, thereby isolating the effect of the damping.
+
+Given this, the discrete counterparts of errors \eqref{eq: p14 max E (weak)} and \eqref{eq: f04 E max (strong)} are, respectively,
+\begin{gather*}
+    \max_{n\in\{0,...,N\}}\E\left[\left|\bar{X}_{t_n}^\gamma-\bar{X}_{t_n}^0\right|_2^2\right]\quad\text{and}\quad\E\left[\max_{n\in\{0,...,N\}}\left|\bar{X}_{t_n}^\gamma-\bar{X}_{t_n}^0\right|_2^2\right]
+\end{gather*}
+where $\bar{X}_{t_n}^\gamma$ and $\bar{X}_{t(n)}^0$ are the respective discretizations of \eqref{eq: OLD aka stochastic gradient flow} and \eqref{eq: ULD canonical}.
+
+Now, notice \begin{align}
+\label{eq: underbrace}
+\left\|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right\|_2
+&= \left|\bar{X}_{t_n}^\gamma - X_{t(n)}^\gamma
+    + X_{t(n)}^\gamma - X_{t(n)}^0
+    + X_{t(n)}^0 - \bar{X}_{t_n}^0\right|_2\nonumber\\[1em]
+&\leq
+\underbrace{
+    \left| \bar{X}_{t_n}^\gamma - X_{t(n)}^\gamma \right|_2
+}_{\substack{
+    \text{EM error for ULD}
+}}
++
+\underbrace{
+    \left| X_{t(n)}^\gamma - X_{t(n)}^0 \right|_2
+}_{\substack{
+    \text{Continuous-time ULD vs. OLD gap}
+}}
++
+\underbrace{
+    \left| X_{t(n)}^0 - \bar{X}_{t_n}^0 \right|_2
+}_{\substack{
+    \text{EM error for OLD}
+}}
+\end{align}
+
+\paragraph{Weak error.}
+For a general SDE \eqref{eq: SDE of a general form}, recall that under the assumption that the drift coefficient is \emph{twice continuously differentiable} with globally Lipschitz and bounded first and second derivatives, and that the diffusion coefficient is constant; classical results (\cite{kloeden1992numerical}) guarantee that the strong error of the Euler--Maruyama discretization\footnote{Here, the term ``strong error'' refers to the standard terminology in numerical SDE analysis, which distinguishes between strong and weak convergence of numerical schemes (i.e., path-wise vs.\ distributional convergence). This should not be confused with the ``strong'' and ``weak'' labels used earlier in this work to distinguish between two types of continuous-time dynamics.} satisfies
+\[
+\max_{n\in\{0,\ldots,N\}} \E\left|\bar{X}_{t_n} - X_{t(n)}\right|_2^2 \leq c h,
+\]
+where $c$ depends on the regularity constants (Lipschitz and bounds on derivatives), the dimension $d$, the time horizon $T$, and the bounds on the moments of the initial condition.
+
+\begin{remark}
+    For existence and uniqueness of solutions, it suffices for the drift to be globally Lipschitz. However, for the above strong convergence rate and to control the Taylor expansion remainders in the error analysis, bounded and Lipschitz first and second derivatives are typically required.
+\end{remark}
+
+Applying this to both the underdamped Langevin (ULD) and overdamped Langevin (OLD) systems, we obtain
+\begin{align*}
+\max_{n\in\{0,\ldots,N\}} \E\left|\bar{X}_{t_n}^\gamma - X_{t(n)}^\gamma\right|_2^2 &\leq c_1 h, \\
+\max_{n\in\{0,\ldots,N\}} \E\left|\bar{X}_{t_n}^0 - X_{t(n)}^0\right|_2^2 &\leq c_2 h,
+\end{align*}
+for some constants $c_1, c_2$.
+
+Notice the middle part is directly controlled by the Kramers-Smoluchowski weak error bound $\max_{n\in[0,T]}\E\left|X_{t(n)}^\gamma - X_{t(n)}^0\right|_2^2 = \mathcal{O}(\gamma)$.
+Combining the three inequalities, we obtain the following:
+\[
+\max_{n\in\{0,\ldots,N\}} \E\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2
+\leq c_1 h + c_2 \gamma + c_3 h = (c_1 + c_3)h + c_2 \gamma.
+\]
+
+\paragraph{Strong error.}
+Let us now analyze the strong error of the discrete-time approximation, which is the discrete analogue of the strong error bound \eqref{eq: f04 E max (strong)} obtained in the continuous-time setting.
+
+Again, we start from the triangle inequality decomposition \eqref{eq: underbrace}, but now we are interested in the expression
+\[
+\E\left[\max_{n\in\{0, \ldots, N\}}\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2\right].
+\]
+
+Using the properties of a maximum, then using the elementary inequality $(a+b+c)^2 \leq 3(a^2+b^2+c^2)$ and taking expectations, we obtain
+\begin{align}
+    \label{eq: 3 rows}
+    \E\left[\max_n \left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2\right]&\leq 3\E\left[\max_n \left| \bar{X}_{t_n}^\gamma - X_{t(n)}^\gamma \right|_2^2\right]\nonumber\\
+    &+3\E\left[\max_n \left| X_{t(n)}^\gamma - X_{t(n)}^0 \right|_2^2\right]\\
+    &+3\E\left[\max_n \left| X_{t(n)}^0 - \bar{X}_{t_n}^0 \right|_2^2\right].\nonumber
+\end{align}
+
+The first and third terms correspond to the strong error of the Euler--Maruyama discretization for ULD and OLD, respectively. Under the same regularity assumptions as before, classical results (\cite{kloeden1992numerical}) guarantee
+\[
+\E\left[\max_{n}\left| \bar{X}_{t_n}^\gamma - X_{t(n)}^\gamma \right|_2^2\right] \leq c_1 h,
+\qquad
+\E\left[\max_{n}\left| \bar{X}_{t_n}^0 - X_{t(n)}^0 \right|_2^2\right] \leq c_2 h,
+\]
+where the constants $c_1, c_2$ depend on the drift and diffusion coefficients and on the time horizon $T$.
+
+The term \eqref{eq: 3 rows} is once again precisely the Kramers--Smoluchowski strong error bound $\E\left[\max_{n\in[0, N]}\left| X_{t(n)}^\gamma - X_{t(n)}^0 \right|_2^2\right] = \mathcal{O}(\gamma)$.
+
+Collecting all terms,
+\[
+\E\left[\max_{n\in\{0,\ldots,N\}} \left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2\right]
+\leq c_1 h + c_2 \gamma + c_3 h = (c_1 + c_3)h + c_2 \gamma.
+\]
+for some constants $c_1, c_2, c_3$ depending on $T, d, b, \sigma$, and the moments of the initial conditions.
+
+\paragraph{Parameter tuning.}
+
+To observe the $\mathcal{O}(\gamma)$ regime for both errors, the discretization error must not dominate the continuous-time gap. That is,
+\[
+h \lesssim \gamma\quad\Longleftrightarrow\quad h \leq C \gamma \quad \text{for some } C > 0.
+\]
+This means that with at most $h \asymp \gamma$, we're able to arrive at
+\[
+\max_{n\in\{0,\ldots,N\}} \E\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2 \le c_2\gamma,\quad \E\left[\max_{n\in\{0,\ldots,N\}}\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2\right] \le c_2\gamma,
+\]
+which matches the continuous-time bound up to constants.
+
+\begin{remark}
+Due to the form of the drift coefficient in the underdamped Langevin dynamics \eqref{eq: ULD canonical}, the above analysis requires the Euler--Maruyama stepsize $h$ to be sufficiently small to guarantee numerical stability.
+Namely, the velocity component in the underdamped Langevin equation,
+\[
+dV_t^\gamma = -\gamma^{-1} V_t^\gamma\,dt + \ldots,
+\]
+corresponds to a stiff linear ODE in $V$. For the explicit Euler discretization, this means
+\[
+\bar{V}^\gamma_{n+1} = (1 - h\gamma^{-1}) \bar{V}^\gamma_n + \ldots.
+\]
+The scheme is stable if and only if $|1 - h\gamma^{-1}| < 1$, which yields the condition
+\[
+0 < h\gamma^{-1} < 2\quad\Longleftrightarrow\quad h < 2\gamma.
+\]
+Thus, the universal stability constant in this case is $c_2 = 2$ (see, e.g., \cite{msh02}, or classical ODE stability analysis).
+This stability constraint $h \lesssim \gamma$ is fully compatible with the error-optimal regime $h \asymp \gamma$, and should always be enforced in practice when simulating underdamped Langevin dynamics.
+\end{remark}
+
+\begin{remark}
+\label{remark: h ll gamma}
+The requirement that $h < 2\gamma$ ensures stability for the deterministic part of the discretization only. However, in practice the presence of noise might require a more conservative stepsize, typically with $h \ll \gamma$.
+\end{remark}
+
+An optimization perspective on these remarks is the following: running a scheme where $\gamma$ decreases to zero\footnote{perhaps to take advantage of the behaviour of the underdamped regime in the early stages of optimization, and then transition to the properties of the overdamped regime as the algorithm progresses} imposes an upper bound on the admissible stepsize $h$. This can limit the flexibility of stepsize selection, particularly in ML or NN applications, where one may wish to use larger stepsizes or adapt them dynamically. In such settings, a slowly decaying $\gamma$ can lead to overly restrictive (small) stepsizes, potentially slowing convergence or limiting exploration.\\
+
+We summarize the discrete bounds in the following theorem:
+
+\begin{theorem}[Discrete Kramers-Smoluchowski weak and strong error bounds]
+\label{thm: KS discrete bounds (weak, strong)}
+Suppose that $f$ is twice continuously differentiable with Lipschitz gradient, and $\sigma>0$ is constant. Let $\bar{X}^\gamma_{t_n}$ and $\bar{X}^0_{t_n}$ denote Euler--Maruyama discretizations of the underdamped and overdamped Langevin dynamics, respectively, with stepsize $h$ and initial conditions with finite second moments. Then, for any $T>0$, if $h \asymp 2\gamma \leq w$, there exists $c = c(T, d, b, \sigma)$ such that
+\begin{equation}
+\label{eq: KS discrete bound weak}
+\max_{n\in\{0,\ldots,N\}} \E\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2 \leq c\gamma\quad\Longleftrightarrow
+\quad\boxed{
+ \max_{t \in [0, T]}\E\left[\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2 \right] = \mathcal{O}(\gamma)
+}
+\end{equation}
+\begin{equation}
+\label{eq: KS discrete bound strong}
+\E\left[\max_{n\in\{0, \ldots, N\}}\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2\right] \leq c\gamma
+\quad\Longleftrightarrow\quad
+\boxed{
+\E\left[\max_{t \in [0, T]}\left|\bar{X}_{t_n}^\gamma - \bar{X}_{t_n}^0\right|_2^2\right] = \mathcal{O}(\gamma)
+}
+\end{equation}
+\end{theorem}
+\begin{remark}
+Note that, as in the continuous-time case, the strong error bound provides a guarantee for the maximum path-wise deviation between the two schemes over the whole time interval. However, in the discrete setting, the constants may grow with the number of steps $N$ (i.e., with $T/h$), which may exceed the applicability domain of Theorem \ref{thm: KS discrete bounds (weak, strong)}.
+In particular, this is often the case of ML and NN training, where considering the total modelling time $T$ is itself an uncommon approach, let alone tuning $h$ according to it.
+\end{remark}
+
+\paragraph{On the attainability of the $\mathcal{O}(\gamma)$ regime in practice.}
+This part is motivated by the prototypical ULA use-case scenario, which is the following.
+The fact that SGD possesses favourable convergence properties for realistic regularity conditions (see Paragraph \ref{para: Stochastic gradients}) and given that similar results are yet to be established for ULA, its expected that ULA usage in optimization tasks would base upon configuring a \emph{decreasing} $\gamma_n$ schedule.
+If the assumptions of Theorem \ref{thm: KS discrete bounds (weak, strong)} are satisfied, this would guarantee inheritance of SGD convergence properties by ULA \emph{once the strong and weak Kramers-Smoluchowski bounds are achieved}.
+Doing so, one can observe faster effective convergence of SGD (to a minimizer) than the effective Kramers-Smoluchowski convergence of the two schemes.
+In this case, the difference between the two schemes remains non-negligible after the convergence of SGD, which can result in misleading conclusions.
+
+Thus, matching the discrete error bounds is only meaningful if the algorithm is run sufficiently long for both asymptotic regimes to manifest.
+Quantifying these constants, and ensuring that ULD ``catches up'' to SGD---as well as that SGD converges within the optimization time horizon---is essential for the practical application of Theorem \ref{thm: KS discrete bounds (weak, strong)}. This consideration suggests a careful balancing of $\gamma$, $h$, and total runtime $T$ in any implementation.
+
+\paragraph{On improving \eqref{eq: KS discrete bound weak} and \eqref{eq: KS discrete bound strong}.}
+Two observations hint towards the inability to improve the above bounds:
+\begin{enumerate}
+    \item the continuous and discrete convergence bounds match exactly (both are linear);
+    \item the original result is tight enough, in a sense that exchanging the order of maximum and expectation operators does not introduce the deterioration, although by Jensen's inequality the strong bound is always greater that the weak one.
+\end{enumerate}
+Nevertheless, Theorem \ref{thm: KS discrete bounds (weak, strong)} is most definitely subject to refinements, especially considering the strictness of its assumptions and the triviality of its proof, which suggest that more general or sharper results may be attainable through alternative techniques or relaxed conditions.
+The exact dependence $c=c(T, d, b, \sigma)$ could also bring valuable insights.
+
+\section{Empirical validation}
+
+This section describes a set of test functions and experimental setup used to empirically compare the convergence behaviour of overdamped and underdamped Langevin algorithms. For each function, we briefly comment on what we expected it to depict, describe the plots and indicate the metrics plotted on the $y$-axis.
+Throughout, we emphasize the role of Lipschitz continuity, parameter regimes, and highlight when damping provides a tangible advantage.
+
+\paragraph{Quadratic function.}
+\[
+    f(x) = \frac{1}{2}\|x\|_2^2,\quad \nabla f(x) = x, \quad x \in \mathbb{R^d}
+\]
+The quadratic function is convex, strongly convex, and Lipschitz on any bounded set $E_c = \{x \mid f(x) \le c\}$ for $c < \infty$---as any function with continuous Hessian on $E_c$ is for that matter.
+It serves as a suitable baseline for future experiments.
+
+Empirical validation on this function involves plotting the weak and strong Kramers--Smoluchowski (K--S for brevity) rates, where the effects of varying the dimension $d$ can be isolated.
+Figure \ref{fig:x2d1050} depicts how the rates are consistent across orders of magnitude from $10^1$ to $10^5$.
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{x^2:2 d10.png}
+        % \caption*{(a) Caption for the first subfigure.}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{x^2:2 d50.png}
+        % \caption*{(b) Caption for the second subfigure.}
+    \end{minipage}
+    \caption{Weak and strong K--S rates for vanilla quadratic functional.}
+    \label{fig:x2d1050}
+\end{figure}
+
+\paragraph{Non-convex, local minima, in $d=1$.}
+We consider a rather arbitrary function with different local minima and a non-regular landscape:
+\begin{align}
+    \label{eq: 1d green purple}
+    f(x) &= \sin(4x)\exp(-0.1 x^2) + 0.2 x^3 + \cos(2x), \\
+    \nabla f(x) &= 4\cos(4x)\exp(-0.1 x^2) - 0.2 x \sin(4x)\exp(-0.1 x^2) + 0.6 x^2 + 2 \sin(2x)\nonumber
+\end{align}
+The (numerical) global minimizer is $x^* \approx -0.32$,
+and two (numerical) suboptimal stationary points are $\tilde{x}_1 \approx 0.98$ and $\tilde{x}_2 \approx 2.5$.
+
+This function is Lipschitz on $E_c$.
+
+Figure \ref{fig: green purple 1d} shows two trajectories where the underdamped algorithm is (\textit{i}) able to partially explore the landscape and stick to a better optima than the overdamped one; (\textit{ii}) smoother in terms of the trajectory and clearly more apparently driven by the inertia underdamping.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{green purple 1d iter.png}
+        % \caption*{(a) Caption for the first subfigure.}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{green purple 1d value.png}
+        % \caption*{(b) Caption for the second subfigure.}
+    \end{minipage}
+    \caption{Performance of underdamped and overdamped Langevin algorithms (ULA and SGD, resp.) on \eqref{eq: 1d green purple}. Parameter set: $\gamma^{-1}=4.595$, $h=10$, $N=100$.}
+    \label{fig: green purple 1d}
+\end{figure}
+
+
+\paragraph{Double-well potential.}
+\label{par: double well}
+\[
+    f(x) = \frac{1}{4}\|x\|_2^{4} - \frac{1}{2}\|x\|_2^{2},\quad \nabla f(x) = \|x\|_2^{2}\cdot x - x, \quad x \in \mathbb{R}^d.
+\]
+
+This non-convex function features two symmetric minima and a saddle at the origin.
+It is Lipschitz on $E_c$.
+Plots focus on the rates evolution as dimensionality increases.
+This is a useful baseline for non-ideal regularity experiments.
+
+Dimensionality seems to greatly affect the rates, Figure \ref{fig: double well d4,16,64,256 n_rep100} shows: as we approach $d=256$---which is tiny compared to modern optimization problems---the rate deteriorates to $\bigO(\gamma^{1.546})$.
+
+Notice this function is outside of the applicability domain for Theorem \ref{thm: KS discrete bounds (weak, strong)} because its gradient is not Lipschitz on $\R^d$.
+
+\paragraph{Diagonal quadratic.}
+Define
+\begin{align*}
+    f(x) &= \frac{1}{2} x^T D x, \qquad D = \operatorname{diag}(\lambda_1, \dots, \lambda_d), \qquad \lambda_i = \kappa^{\frac{i-1}{d-1}},\\
+    f(x) &= \frac{1}{2} \sum_{i=1}^d \kappa^{\frac{i-1}{d-1}} x_i^2.
+\end{align*}
+so that
+\[
+    \nabla f(x) = D x, \qquad \operatorname{cond}(D) = \frac{\lambda_d}{\lambda_1} = \kappa.
+\]
+This function is Lipschitz on $E_c$.
+It is a prototypical high-dimensional, ill-conditioned landscape that we're doing to worsen as $\kappa$ increases.
+Plots report the weak and strong K--S rates that tern out unaffected (see Figure \ref{fig: diag quad kappa01,05,2,4 weak strong}), and a plot of the weak error dependence on $t_n$ for difference $\gamma$ values (see Figure \ref{fig: diag quad kappa01,05,2,4 weak}).
+In the later case, we see how the rate is linear at first, but then becomes convex and even non-monotone.
+The results are uniform among all $\gamma$ values.
+This hints towards the possibility that ill-conditioned objective functions make the weak error analysis unpredictable.
+
+\paragraph{Rosenbrock function, $d=2$.}
+\begin{align*}
+    f(x) &= 100(x_2 - x_1^2)^2 + (1 - x_1)^2\\
+    \nabla f(x) &=
+    \begin{pmatrix}
+        -400 x_1 (x_2 - x_1^2) - 2 (1 - x_1) \\
+        200 (x_2 - x_1^2)
+    \end{pmatrix}
+\end{align*}
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \safeincludegraphics[width=0.4\textwidth]{rosenbrock d2 n_rep20.png}
+    \caption{Weak and strong K--S rates for Rosenbrock function.}
+    \label{fig: rosenbrock d2 n_rep20}
+\end{wrapfigure}
+
+The Rosenbrock function is a classic benchmark in optimization, exhibiting a narrow, curved valley leading to the unique minimum. While it is Lipschitz on $E_c$ , it is non-convex and has challenging geometry.
+Figure \ref{fig: rosenbrock d2 n_rep20} shows how the rate is worsened to $\bigO(\gamma^{1.544})$ even for $d=2$, indicating that not only dimensionality may affect the rates (see Paragraph \ref{par: double well}), but also geometry.
+
+\paragraph{Himmelblau function, $d=2$.}
+\begin{align*}
+    f(x) &= (x_1^2 + x_2 - 11)^2 + (x_1 + x_2^2 - 7)^2\\
+    \nabla f(x) &=
+    \begin{pmatrix}
+        4x_1(x_1^2 + x_2 - 11) + 2(x_1 + x_2^2 - 7) \\
+        2(x_1^2 + x_2 - 11) + 4x_2(x_1 + x_2^2 - 7)
+    \end{pmatrix}
+\end{align*}
+
+The Himmelblau function has four symmetric minima and multiple saddle points.
+It is Lipschitz on $E_c$.
+This experiment is unique and shows unexpected behaviour, when the K--S bounds are getting highly uneven across the number of paths used for computing the estimate of $\E\left|X_{t(n)}^\gamma - X_{t(n)}^0\right|_2^2$.
+Figure \ref{fig: himmelblau d2 n_rep20,150,300,500.png} depicts that evolution.
+The result is even more incredible considering that strong and weak bounds are being ``deformed'' in a similar shape.
+
+Notably, other more regular functions do also show a similar yet less explicit bounds ``deformation'' (tested only on a double-well potential, which still outside of Theorem \ref{thm: KS discrete bounds (weak, strong)} applicability). \\
+
+In all the experiment we fix $\sigma$ on a relatively small level of $\frac{1}{10}$ since its theoretical affect is fairly mild compared to other parameters.
+This could explain why the value $c=1.89$ was sufficient for stable training in every instance of it.
+
+\section{Discussion}
+
+The theoretical analysis and empirical investigation carried out in this work offer a unified and comprehensive perspective on the relationship between underdamped and overdamped Langevin algorithms, both at the level of continuous dynamics and their discrete-time counterparts. \\
+
+As part of this analysis, we reconciled several common formulations of underdamped Langevin dynamics found in the literature, providing explicit correspondences between differing notational conventions and parametrizations.
+This unification not only clarifies the connections between physical, statistical, and algorithmic perspectives, but also ensures that theoretical results can be consistently translated across frameworks.
+By deriving rigorous error bounds and validating them in practice, we have clarified not only the theoretical behaviour but also the quantitative performance of these algorithms on test functions of different regularity.\\
+
+First, the results confirm that the Kramers--Smoluchowski limit provides a robust theoretical bridge between the two regimes: as the damping parameter $\gamma$ tends to zero, the underdamped iterative scheme converges to the overdamped one at a rate controlled by $\mathcal{O}(\gamma)$, provided a stepsize $h$ sufficiently small relative to $\gamma$.
+Notably, the discrete weak and strong error bounds coincide in order with their continuous analogues, up to constants, justifying the use of these approximations in algorithmic implementations.\\
+
+Empirically, all test cases align with these theoretical predictions.
+
+On strongly convex and Lipschitz objectives (e.g., the quadratic function), both algorithms demonstrate the expected convergence rates and error scaling. The observed error decay matches the predicted $\mathcal{O}(\gamma)$ regime, provided the stepsize condition $h \lesssim \gamma$ is enforced. This validates the practical attainability of the theoretical rates in Theorem \ref{thm: KS discrete bounds (weak, strong)}.
+
+For ill-conditioned or high-dimensional settings the performance is not that robust: the dependence of convergence rates on the condition number $\kappa$, as well as the number of samples for the empirical means is evident and sometimes unintuitive.
+
+Across all experiments, the use of shared Brownian increments for both dynamics (variance reduction) was key in enabling clear empirical comparisons, as it narrowed down the extra noise to only the one arising from damping.\\
+
+In summary, the study demonstrates that the theoretical framework behind the connection between underdamped and overdamped Langevin algorithms is not only theoretically plausible but also relevant in practical terms for stochastic optimization.
+The main theoretical claims---including the scaling of error bounds, the impact of discretization, and the stability constraints---were supported by empirical evidence.
+The benefits of including the velocity variable, while often modest, are most vivid in non-convex or multi-modal cases where momentum can help escape suboptimal regions.
+Nonetheless, careful parameter tuning remains essential to fully realize these advantages in practice.
+
+\section{Future work}
+
+While the present study achieves its central objectives---unifying underdamped Langevin formulations, rigorously quantifying the continuous and discrete error bounds, and validating these results empirically on a set of representative test functions---it also opens several promising avenues for further investigation.
+
+First, the empirical evaluation in this study was focused solely on prototypical low- and moderate-dimensional optimization problems. An immediate extension would be to benchmark the discrete underdamped and overdamped Langevin algorithms on realistic large-scale machine learning tasks, including high-dimensional neural network training and non-synthetic datasets. This would both stress-test the theoretical predictions and challenge the practical utility of damping in most practical tasks.
+
+Second, the error analysis in this work relies on classical assumptions---twice continuous differentiability and global Lipschitz continuity of the drift---which may be restrictive for practical applications.
+Extending the strong and weak error bounds to settings with weaker regularity (e.g., local Lipschitz or even non-smooth objectives) would increase the applicability of these results. Moreover, formulating the explicit functional laws of the constants in the discrete error bounds could provide sharper guidelines for parameter tuning.
+
+An important and powerful generalization would be to consider higher-order moments ($p>2$) for the gap between the dynamics (both continuous and discrete).
+
+A further theoretical direction concerns the analysis of adaptive or time-dependent parameter schedules.
+In practice, the friction parameter $\gamma$ and stepsize $h$ are rarely held constant; rather, they are commonly configured to decay according to the scheduler.
+Understanding how such modifications affect the discrete Kramers--Smoluchowski error bounds, especially in the regime where $\gamma_n \downarrow 0$ and $h_n$ varies dynamically, remains a relevant problem.
+
+An additional direction for future research concerns the comparative analysis of underdamped and overdamped Langevin algorithms in the context of sampling.
+While this study addresses convergence in the sense of optimization errors, recent works have demonstrated that underdamped Langevin dynamics can yield accelerated convergence rates in sampling from smooth, strongly log-concave distributions.
+In some cases from Paragraph \ref{par: sampling} the underdamped algorithms enjoyed improved convergence constants over the classical overdamped ones.
+Moreover, alternative discretizations and noise structures have been shown to further enhance sampling efficiency in high-dimensional or multi-modal settings.
+A systematic empirical and theoretical investigation of this topic---particularly regarding the role of damping in exploring complex landscapes and the impact of discretization choices---remains an open and promising area for future exploration.\\
+
+Overall, the present results set the stage for these improvements, providing a solid foundation for the rigorous analysis and practical deployment of underdamped stochastic optimization algorithms.
+
+\newpage
+\printbibliography
+
+% --- === ---
+
+\newpage
+\section{Appendix}
+
+\begin{figure}[!htbp]
+    \centering
+    % First row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{double well d4 n_rep100.png}
+        % \caption*{(a) First image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{double well d16 n_rep100.png}
+        % \caption*{(b) Second image}
+    \end{minipage}
+
+    \vspace{0.5em}
+
+    % Second row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{double well d64 n_rep100.png}
+        % \caption*{(c) Third image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{double well d256 n_rep100.png}
+        % \caption*{(d) Fourth image}
+    \end{minipage}
+
+    \caption{Weak and strong K--S rates for double-well potential for different $d$.}
+    \label{fig: double well d4,16,64,256 n_rep100}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    % First row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa01 weak strong.png}
+        % \caption*{(a) First image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa05 weak strong.png}
+        % \caption*{(b) Second image}
+    \end{minipage}
+
+    \vspace{0.5em}
+
+    % Second row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa2 weak strong.png}
+        % \caption*{(c) Third image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa4 weak strong.png}
+        % \caption*{(d) Fourth image}
+    \end{minipage}
+
+    \caption{Weak and strong K--S rates for diagonal quadratic function for different $d$.}
+    \label{fig: diag quad kappa01,05,2,4 weak strong}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    % First row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa01 weak.png}
+        % \caption*{(a) First image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa05 weak.png}
+        % \caption*{(b) Second image}
+    \end{minipage}
+
+    \vspace{0.5em}
+
+    % Second row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa2 weak.png}
+        % \caption*{(c) Third image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{diag quad kappa4 weak.png}
+        % \caption*{(d) Fourth image}
+    \end{minipage}
+
+    \caption{Weak K--S error rates $t_n$ dynamic for diagonal quadratic function for different $\kappa$.}
+    \label{fig: diag quad kappa01,05,2,4 weak}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    % First row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{himmelblau d2 n_rep20.png}
+        % \caption*{(a) First image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{himmelblau d2 n_rep150.png}
+        % \caption*{(b) Second image}
+    \end{minipage}
+
+    \vspace{0.5em}
+
+    % Second row
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{himmelblau d2 n_rep300.png}
+        % \caption*{(c) Third image}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \safeincludegraphics[width=\linewidth]{himmelblau d2 n_rep500.png}
+        % \caption*{(d) Fourth image}
+    \end{minipage}
+
+    \caption{Weak and strong K--S rates for Himmelblau function for different expectation sample sizes.}
+    \label{fig: himmelblau d2 n_rep20,150,300,500.png}
+\end{figure}
+
+\end{document}

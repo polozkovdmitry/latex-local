@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+
+% --- Encoding / language (XeLaTeX-safe) ---
+\usepackage{fontspec}
+\usepackage[english, russian]{babel}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Times New Roman}
+
+% --- Math / theorem ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage{breqn}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+\usepackage{enumerate}
+\usepackage{empheq}
+
+% --- Graphics / layout ---
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2cm,
+    bottom=2cm,
+    bindingoffset=0cm
+}
+
+% --- Extra utilities ---
+\usepackage{pifont}
+\usepackage{lipsum}
+\usepackage{todonotes}
+\usepackage{csquotes}
+
+% --- Bibliography ---
+\usepackage[backend=biber,style=alphabetic]{biblatex}
+\addbibresource{references.bib}
+
+% --- Hyperref (must be loaded last) ---
+\usepackage{hyperref}
+
+% --- Custom imports ---
+\input{notations}
+
+% --- Safe image inclusion (shows empty figure if file missing) ---
+\newcommand{\safeincludegraphics}[2][]{%
+    \IfFileExists{#2}{%
+        \includegraphics[#1]{#2}%
+    }{%
+        \textcolor{gray}{\rule{0.8\linewidth}{0.6\linewidth}}%
+    }%
+}
+
+% --- Theorems ---
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% --- Colors ---
+\definecolor{darkred}{RGB}{139,0,0}
+
+% --- Date helper ---
+\newcommand{\todayYYMMDD}{\the\year-\the\month-\the\day}
+
+
+\begin{document}
+
+\hfill
+% \todayYYMMDD
+\begin{center}
+% \section*{Custom course or document title}
+\textit{eva hw2 задание1}\\
+% \textit{Optional subtitle}\\
+\textit{Author: Полозков Дмитрий}\\
+% \textit{Supervisor: Name}\\
+\textit{Date: \today}
+\end{center}
+
+% \tableofcontents
+% \newpage 
+
+\section*{Задание 1}
+
+\begin{enumerate}
+    \item 
+    В первую очередь, заметим симметричность копулы по $u_1$, $u_2$.
+    Таким образом, любое свойство, верное для $u_1$ автоматически верно для $u_2$.
+
+    Первое св-во копулы: равенство 0 когда один из аргументов равен 0.
+    У нас: $C(0,\,u_2\;\;\theta)=0+0+0$ т.к. первое слагаемое имеет множитель $\min(0,\,u_2)=0$; второй - домножение на $u_1=0$; трерий - множитель $\max(0+u_2-1,\,0)=0$.
+
+    Второе св-во: $C$ не убывает по $u_1$. 
+    Также выполнено т.к. $\min$ от неуб. аргументов - неуб.; $u_1u_2$ - неуб. функция; $\max$ от неуб. арг. - неуб.
+
+    Третье св-во: 
+    \begin{align*}
+        C(1,\,u_2;\;\theta)&=\frac{\theta^2(1+\theta)}{2}u_2+(1-\theta^2)u_2+\frac{\theta^2(1-\theta)}{2}u_2\\
+        &=\frac{2\theta^2}{2}u_2+(1-\theta^2)u_2\\
+        &=u_2.
+    \end{align*}
+    \item 
+    По т. Склара, 
+    \[
+        \P(X_1\le x_1,\,X_2\le x_2)=C(F_1(x_1),\,F_2(x_2);\;\theta).
+    \]
+    Значит, по формуле включений исключений,
+    \begin{align*}
+        \P(X_1>10,\,X_2>2)&=1-\P(X_1<10)-\P(X_2<2)+\P(X_1<10,\,X_2<2)\\
+        &=1-F_1(10)-F_2(2)+C(F_1(10),\,F_2(2);\;\theta). 
+    \end{align*}
+    Осталось только подставить значения и получить функцию от $\theta$
+    
+    :)
+    \item
+    Заметим, независимость эквивалентна выполнению
+    \[
+        \P(X_1\le x_1,\,X_2\le x_2)=\P(X_1\le x_1)\P(X_2\le x_2)
+    \]
+    для любых $x_1,\,x_2$.
+    Данное можно переписать как
+    \begin{equation}
+        \label{eq:indep}
+        C(F_1(x_1),\,F_2(x_2);\;\theta)=F_1(x_1)F_2(x_2).
+    \end{equation}
+    Заметим, при $\theta=0$ имеем 
+    \[
+        C(u_1,\,u_2;\;\theta)=0+(1-0)u_1u_2+0=u_1u_2,
+    \]
+    что дает \eqref{eq:indep}.
+\end{enumerate}
+
+\end{document}
+

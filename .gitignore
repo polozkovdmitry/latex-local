@@ -2,8 +2,7 @@
 /build_private/
 /pdfs_public/
 /pdfs_private/
-/projects_private/*
-!/projects_private/.gitkeep
+/projects_private/
 
 *.aux
 *.log

@@ -11,7 +11,7 @@ usage() {
     echo "Examples:"
     echo "  $0 ksjj"
     echo "  $0 thesis"
-    echo "  $0 projects/public/ksjj/ksjj.tex"
+    echo "  $0 projects_public/ksjj/ksjj.tex"
     exit 1
 }
 
@@ -25,7 +25,7 @@ if [[ "$INPUT" == *.tex ]]; then
     PROJECT_DIR="$(dirname "$TEX_FILE")"
     PROJECT_NAME="$(basename "$TEX_FILE" .tex)"
     # Determine visibility from path
-    if [[ "$TEX_FILE" == */projects/private/* ]]; then
+    if [[ "$TEX_FILE" == */projects_private/* ]]; then
         VISIBILITY="private"
     else
         VISIBILITY="public"
@@ -33,29 +33,29 @@ if [[ "$INPUT" == *.tex ]]; then
 else
     # Treat as project name — search public then private
     PROJECT_NAME="$INPUT"
-    if [[ -f "${REPO_DIR}/projects/public/${PROJECT_NAME}/${PROJECT_NAME}.tex" ]]; then
+    if [[ -f "${REPO_DIR}/projects_public/${PROJECT_NAME}/${PROJECT_NAME}.tex" ]]; then
         VISIBILITY="public"
-        PROJECT_DIR="${REPO_DIR}/projects/public/${PROJECT_NAME}"
+        PROJECT_DIR="${REPO_DIR}/projects_public/${PROJECT_NAME}"
         TEX_FILE="${PROJECT_DIR}/${PROJECT_NAME}.tex"
-    elif [[ -f "${REPO_DIR}/projects/private/${PROJECT_NAME}/${PROJECT_NAME}.tex" ]]; then
+    elif [[ -f "${REPO_DIR}/projects_private/${PROJECT_NAME}/${PROJECT_NAME}.tex" ]]; then
         VISIBILITY="private"
-        PROJECT_DIR="${REPO_DIR}/projects/private/${PROJECT_NAME}"
+        PROJECT_DIR="${REPO_DIR}/projects_private/${PROJECT_NAME}"
         TEX_FILE="${PROJECT_DIR}/${PROJECT_NAME}.tex"
     else
         echo "Error: project '${PROJECT_NAME}' not found."
         echo "Looked in:"
-        echo "  ${REPO_DIR}/projects/public/${PROJECT_NAME}/${PROJECT_NAME}.tex"
-        echo "  ${REPO_DIR}/projects/private/${PROJECT_NAME}/${PROJECT_NAME}.tex"
+        echo "  ${REPO_DIR}/projects_public/${PROJECT_NAME}/${PROJECT_NAME}.tex"
+        echo "  ${REPO_DIR}/projects_private/${PROJECT_NAME}/${PROJECT_NAME}.tex"
         exit 1
     fi
 fi
 
-BUILD_DIR="${REPO_DIR}/build/${VISIBILITY}/${PROJECT_NAME}"
-PDF_DIR="${REPO_DIR}/pdfs/${VISIBILITY}"
+BUILD_DIR="${REPO_DIR}/build_${VISIBILITY}/${PROJECT_NAME}"
+PDF_DIR="${REPO_DIR}/pdfs_${VISIBILITY}"
 mkdir -p "${BUILD_DIR}" "${PDF_DIR}"
 
 export TEXINPUTS="./:${REPO_DIR}/shared//:${REPO_DIR}/shared/templates//:"
-export BIBINPUTS="./:${REPO_DIR}/shared//:"
+export BIBINPUTS="${PROJECT_DIR}/:${REPO_DIR}/shared//:"
 
 cd "${PROJECT_DIR}"
 

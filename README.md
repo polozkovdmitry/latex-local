@@ -46,16 +46,16 @@ latex-local/
 │       ├── preamble-article.tex       # single-column article preamble
 │       ├── preamble-article-twocol.tex # two-column article preamble
 │       └── preamble-beamer.tex        # Beamer slides preamble
-├── projects/
-│   ├── public/                        # git-tracked — ready to share
-│   │   ├── thesis/                    # master's thesis (Langevin algorithms)
-│   │   ├── ksjj/                      # KSJJ paper (Kramers-Smoluchowski)
-│   │   │   └── archive/               # older drafts
-│   │   └── _archive/                  # legacy standalone documents
-│   └── private/                       # git-IGNORED — safe working space
-│       └── (your drafts here)
-├── build/                             # git-ignored; XeLaTeX/biber aux files
-├── pdfs/                              # git-ignored; final PDFs only
+├── projects_public/                   # git-tracked — ready to share
+│   ├── thesis/                        # master's thesis (Langevin algorithms)
+│   └── ksjj/                         # KSJJ paper (Kramers-Smoluchowski)
+│       └── archive/                   # older drafts
+├── projects_private/                  # git-IGNORED — safe working space
+│   └── (your drafts here)
+├── build_public/                      # git-ignored; XeLaTeX/biber aux files (public)
+├── build_private/                     # git-ignored; XeLaTeX/biber aux files (private)
+├── pdfs_public/                       # git-ignored; final PDFs (public)
+├── pdfs_private/                      # git-ignored; final PDFs (private)
 ├── compile.sh                         # CLI compiler (see Quickstart)
 └── .vscode/settings.json              # LaTeX Workshop auto-build config
 ```
@@ -65,12 +65,12 @@ latex-local/
 ## Quickstart
 
 ```bash
-# Compile a project by name — PDF lands in pdfs/public/<name>.pdf
+# Compile a project by name — PDF lands in pdfs_public/<name>.pdf
 ./compile.sh ksjj
 ./compile.sh thesis
 
 # Or pass a full path
-./compile.sh projects/public/ksjj/ksjj.tex
+./compile.sh projects_public/ksjj/ksjj.tex
 ```
 
 ---
@@ -80,11 +80,11 @@ latex-local/
 1. **Create the project folder:**
 
    ```bash
-   mkdir -p projects/public/<name>/figures
-   touch projects/public/<name>/references.bib
+   mkdir -p projects_public/<name>/figures
+   touch projects_public/<name>/references.bib
    ```
 
-2. **Create `projects/public/<name>/<name>.tex`:**
+2. **Create `projects_public/<name>/<name>.tex`:**
 
    ```latex
    \documentclass[12pt]{article}
@@ -122,18 +122,18 @@ latex-local/
 
 ## Public vs private workflow
 
-- Start work privately: create your project under `projects/private/<name>/`. Git never sees it.
-- When ready to publish: `mv projects/private/<name> projects/public/<name>`. On the next `git status` it appears as untracked and you can stage and commit normally.
+- Start work privately: create your project under `projects_private/<name>/`. Git never sees it.
+- When ready to publish: `mv projects_private/<name> projects_public/<name>`. On the next `git status` it appears as untracked and you can stage and commit normally.
 
 ---
 
 ## How `compile.sh` works
 
-The script runs **XeLaTeX → Biber → XeLaTeX → XeLaTeX** and copies the final PDF to `pdfs/<visibility>/<name>.pdf`. It sets `TEXINPUTS` and `BIBINPUTS` so that `\input{preamble-article}` and `\input{notations}` resolve to the files in `shared/templates/` and `shared/` regardless of which project is being compiled.
+The script runs **XeLaTeX → Biber → XeLaTeX → XeLaTeX** and copies the final PDF to `pdfs_public/<name>.pdf` (or `pdfs_private/`). It sets `TEXINPUTS` and `BIBINPUTS` so that `\input{preamble-article}` and `\input{notations}` resolve to the files in `shared/templates/` and `shared/` regardless of which project is being compiled.
 
 ## Notes
 
-- Build artifacts (`.aux`, `.log`, `.bbl`, etc.) go into `build/` — never committed.
-- Final PDFs go into `pdfs/` — also never committed (regenerate with `compile.sh`).
+- Build artifacts (`.aux`, `.log`, `.bbl`, etc.) go into `build_public/` or `build_private/` — never committed.
+- Final PDFs go into `pdfs_public/` or `pdfs_private/` — also never committed (regenerate with `compile.sh`).
 - `shared/notations.tex` defines project-wide math macros; edit it freely but be aware changes affect every project.
 - Each project's `references.bib` is independent — add only the citations you actually use.

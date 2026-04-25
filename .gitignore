@@ -1,7 +1,9 @@
-/build/
-/pdfs/
-projects/private/*
-!projects/private/.gitkeep
+/build_public/
+/build_private/
+/pdfs_public/
+/pdfs_private/
+/projects_private/*
+!/projects_private/.gitkeep
 
 *.aux
 *.log
@@ -14,3 +16,5 @@ projects/private/*
 *.bcf
 *.blg
 *.run.xml
+
+_todo.tex

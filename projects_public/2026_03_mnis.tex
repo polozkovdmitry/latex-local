@@ -1,0 +1,463 @@
+\documentclass{beamer}
+\mode<presentation> {
+% \usetheme{Singapore}
+\usetheme{CambridgeUS}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[page number]
+}
+\input{notations}
+\setbeamerfont{normal text}{size=\normalsize}
+\definecolor{mygreen}{RGB}{0, 128, 0}
+\setbeamertemplate{caption}[numbered]
+% \usepackage[backend=biber, style=alphabetic]{biblatex}
+% \addbibresource{_references.bib}
+
+\usepackage[numbers]{natbib}
+\bibliographystyle{plainnat}
+
+% \usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{wrapfig}
+
+\setbeamertemplate{enumerate item}{\alph{enumi})} % First-level: a) b) c)
+\setbeamertemplate{enumerate subitem}{\roman{enumii}.} % Second-level: i. ii. iii.
+
+\newcommand{\<}{\langle}
+\renewcommand{\>}{\rangle}
+\newcommand{\hy}{\hat{y}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\bw}{\boldsymbol{w}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\usepackage{booktabs}
+% Set hyperlink colors
+\hypersetup{
+    colorlinks=true,
+    linkcolor=mygreen,   % Color of internal links (sections, pages, etc.)
+    citecolor=mygreen,   % Color of citation links (bibliography)
+    urlcolor=mygreen     % Color of external links (URLs)
+}
+\setbeamercolor{footnote mark}{fg=mygreen}
+% \renewcommand*{\thefootnote}{\textcolor{orange}{\arabic{footnote}}}
+
+
+\AtBeginDocument{\usebeamerfont{normal text}}
+
+
+\begin{document}
+\begin{frame}
+    \title{Underdamped Langevin Algorithm and It's Applications}
+    \author{Dmitrii Polozkov\\
+    (under supervision of Dr. J-F. Jabir)}
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{figs/defend ba/hse logo.png} % Replace with your figure file name
+    \end{center}
+    \date{30.03.2026}
+    \maketitle
+\end{frame} 
+
+\begin{frame}{Motivation}
+
+    \begin{center}
+        Many modern optimizers can be interpreted as \textbf{discretizations of continuous dynamics}.
+    \end{center}
+
+    \bigskip
+
+    \begin{itemize}
+        \item Gradient descent = discretization of \textbf{gradient flow}
+        \item SGD = discretization of \textbf{overdamped Langevin dynamics}
+    \end{itemize}
+
+    \bigskip
+
+    \begin{block}{Design principle}
+        Construct new optimization algorithms by choosing a continuous dynamic and discretizing it appropriately
+    \end{block}
+
+    \bigskip
+
+    \begin{center}
+        Let's work with \textbf{underdampled Langevin dynamics}
+    \end{center}
+    
+\end{frame}
+
+\begin{frame}{SGD as discretization of overdamped Langevin}
+
+    \begin{itemize}
+        \item Start from the continuous dynamic (overdamped Langevin):
+        \[
+        d\theta_t=-\nabla V(\theta_t)dt+\sigma dW_t
+        \]
+        
+        \bigskip
+
+        \item Apply Euler--Maruyama discretization with step $\varepsilon_n$:
+        \[
+        \theta_{n+1}
+        =\theta_n-\varepsilon_n\nabla V(\theta_n)
+        +\sqrt{\varepsilon_n}\sigma\xi_n,
+        \qquad \xi_n\sim\mathcal N(0,I_d)
+        \]
+
+        \bigskip
+
+        \item This matches SGD:
+        \[
+        \theta_{n+1}=\theta_n-\varepsilon_n\nabla \hat V(\theta_n)
+        \]
+        
+        \item The estimator $\nabla \hat V(\theta_n)$ satisfies
+        \[
+        \mathbb E[\nabla \hat V(\theta_n)\mid \theta_n]=\nabla V(\theta_n)
+        \]
+        but has non-zero variance, introducing \textbf{stochastic noise} in each update
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Underdamped dynamics and the small-$\gamma$ regime}
+    \begin{block}{Underdamped Langevin dynamics}
+        \[
+        \begin{cases}
+            dX_t^\gamma = V_t^\gamma\,dt,\\[0.3em]
+            dV_t^\gamma = -\gamma^{-1}\bigl(\nabla f(X_t^\gamma)+V_t^\gamma\bigr)\,dt
+            +\gamma^{-1}\sigma\,dW_t
+        \end{cases}
+        \qquad t\ge 0
+        \]
+    \end{block}
+    \begin{itemize}
+        \item The velocity variable reacts on a much faster time scale than the position because of $\gamma$
+        \item When $\gamma$ is small, inertia is quickly forgotten, so the motion is driven mainly by the current landscape and noise\\
+        
+        \medskip 
+        $\Rightarrow$ Position $X_t^\gamma$ should then behave like the overdamped process $X_t^0$
+    \end{itemize}
+    \begin{block}{Overdamped limit}
+        \[
+            dX_t^0=-\nabla f(X_t^0)\,dt+\sigma\,dW_t
+        \]
+    \end{block}
+\end{frame}
+
+\begin{frame}{Continuous convergence results proved so far}
+    Assume $\nabla f$ is globally Lipschitz and the initial condition has finite moments.
+    \bigskip
+    \begin{block}{\textbf{Theorem} \textcolor{mygreen}{Time-marginal mean-square convergence}}
+        For every finite $T$ and every integer $p\ge 1$,
+        \[
+        \max_{t\in[0,T]}\E\bigl[|X_t^\gamma-X_t^0|^{2p}\bigr]=\bigO(\gamma^p).
+        \]
+    \end{block}
+    Let's study the \textcolor{mygreen}{time-marginal} bound for the discrete schemes
+    \bigskip
+    \begin{block}{\textbf{Proposition} Max-in-time estimate}
+        Also,
+        \[
+        \E\Big[\max_{t\in[0,T]}|X_t^\gamma-X_t^0|^2\Big]=\bigO(\gamma^{1/2}).
+        \]
+        (\textit{still under clarification})
+    \end{block}
+\end{frame}
+
+
+\begin{frame}
+\centering
+\begin{tikzpicture}[>=stealth]
+
+\node[draw] (root) at (0,0) {\Large Langevin equation \normalsize};
+
+\node[draw, align=center] (OLD) at (-3, -2) {
+    overdamped Langevin\\
+    dynamics\\
+    \[
+    \small
+    dX_t^0=-\nabla f(X_t^0)\,dt+\sigma\,dW_t
+    \normalsize
+    \]
+};
+
+\node[draw, align=center] (ULD) at (3, -2) {
+    underdamped Langevin\\
+    dynamics\\
+    \[
+    \tiny
+    \begin{cases}
+        dX_t^\gamma=V_t^\gamma\,dt\\
+        dV_t^\gamma=
+        -\gamma^{-1}\bigl(\nabla f(X_t^\gamma)+V_t^\gamma\bigr)\,dt
+        +\gamma^{-1}\sigma\,dW_t
+    \end{cases}
+    \normalsize
+    \]
+};
+
+% No arrows from root
+
+% Arrow: underdamped -> overdamped with gamma -> 0
+\draw[->, thick, draw=mygreen]
+  (ULD) -- (OLD)
+  node[midway, above, text=mygreen] {\tiny$\gamma \to 0$};
+
+\node[draw, align=center] (OLA) at (-3, -5) {
+    SGD\\
+    aka overdamped Langevin algorithm\\
+    \[
+    \small
+    \theta_{n+1} = \theta_n-\varepsilon_n\nabla\hat{V}(\theta_n)
+    \normalsize
+    \]
+};
+
+\node[draw=cyan, text=cyan, align=center] (ULA) at ( 3, -5) {
+    what numerical scheme\\
+    to use for\\
+    discretization of\\
+    underdamped?\\[0.2em]
+    maybe SGD too?
+};
+
+\draw[->, dashed, thick]
+  (OLD) -- (OLA)
+  node[midway, left] {\small Euler-Maruyama\normalsize};
+
+\draw[->, dashed, thick, draw=cyan]
+  (ULD) -- (ULA);
+
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Why plain SGD / Euler--Maruyama is not enough}
+    Applying Euler--Maruyama to the underdamped system gives
+    \[
+    \begin{cases}
+        X_{n+1}=X_n+hV_n,\\
+        V_{n+1}=V_n-\dfrac{h}{\gamma}\bigl(\nabla f(X_n)+V_n\bigr)
+        +\dfrac{\sigma\sqrt h}{\gamma}\xi_n
+    \end{cases}
+    \]
+    \begin{itemize}
+        \item Velocity has \textbf{exponential relaxation} at rate $1/\gamma$
+        \item As $\gamma\downarrow 0$, this becomes \textbf{stiff} $\Rightarrow$ \textbf{instability}
+    \end{itemize}
+    \bigskip
+    \begin{block}{Conclusion}
+        The discrete scheme must capture the fast Ornstein--Uhlenbeck relaxation of the velocity equation.
+    \end{block}
+\end{frame}
+
+% \begin{frame}{Design of the scheme: exponential integration of the OU part}
+%     Freeze the force on one step: $\nabla f(X_t^\gamma)\approx \nabla f(X_n)$ on $[t_n,t_{n+1}]$, and solve the linear velocity equation exactly.
+%     \bigskip
+%     Let $a=e^{-h/\gamma}$. Then the proposed one-step update is
+%     \[
+%     V_{n+1}=aV_n-(1-a)\nabla f(X_n)+\eta_n^{(v)},
+%     \]
+%     \[
+%     X_{n+1}=X_n+\gamma(1-a)V_n-\bigl(h-\gamma(1-a)\bigr)\nabla f(X_n)+\eta_n^{(x)},
+%     \]
+%     where $(\eta_n^{(x)},\eta_n^{(v)})$ is the exact Gaussian noise generated by the frozen linear system.
+%     \bigskip
+%     \begin{itemize}
+%         \item The linear drift in the velocity is solved exactly over each step
+%         \item The exponential form captures the rapid decay of velocity (relaxation)
+%         \item The only approximation comes from keeping $\nabla f(X_t^\gamma)$ fixed within each timestep
+%     \end{itemize}
+% \end{frame}
+
+\begin{frame}{Design of the scheme: exact solution of frozen OU dynamics}
+
+    On each interval $t\in[t_n, t_{n+1}]$, freeze the force:
+    \[
+    \nabla f(X_t^\gamma)\approx \nabla f(X_{t_n}).
+    \]
+
+    Then the velocity equation becomes a linear SDE (Ornstein--Uhlenbeck):
+    \[
+    dV_t = -\tfrac{1}{\gamma}V_t\,dt - \tfrac{1}{\gamma}\nabla f(X_n)\,dt + \tfrac{\sigma}{\gamma}dW_t.
+    \]
+
+    This equation admits an explicit solution:
+    \[
+    V_{n+1} = e^{-h/\gamma}V_n - (1-e^{-h/\gamma})\nabla f(X_n)
+    + \int_{t_n}^{t_{n+1}} e^{-(t_{n+1}-s)/\gamma}\tfrac{\sigma}{\gamma}\,dW_s.
+    \]
+
+    Denote $a=e^{-h/\gamma}$. Then
+    \[
+    \boxed{
+    V_{n+1}=aV_n-(1-a)\nabla f(X_n)+\eta_n^{(v)}.
+    }
+    \]
+
+    The position is obtained by integrating $dX_t = V_t dt$:
+    \[
+    \boxed{
+    X_{n+1}=X_n+\gamma(1-a)V_n-\bigl(h-\gamma(1-a)\bigr)\nabla f(X_n)+\eta_n^{(x)}.
+    }
+    \]
+
+\end{frame}
+
+\begin{frame}{Gaussian noise: exact law}
+
+    The noise terms are stochastic convolutions of Brownian motion:
+    \[
+    \eta_n^{(v)}=\int_{t_n}^{t_{n+1}} e^{-(t_{n+1}-s)/\gamma}\tfrac{\sigma}{\gamma}\,dW_s,
+    \]
+    \[
+    \eta_n^{(x)}=\int_{t_n}^{t_{n+1}}\int_{t_n}^{t} e^{-(t-s)/\gamma}\tfrac{\sigma}{\gamma}\,dW_s\,dt.
+    \]
+
+    They are jointly Gaussian with zero mean and explicit covariance:
+    \[
+    \mathbb E[\eta_n^{(v)}(\eta_n^{(v)})^\top]
+    = \tfrac{\sigma^2}{2\gamma}(1-a^2)I,
+    \]
+    \[
+    \mathbb E[\eta_n^{(x)}(\eta_n^{(x)})^\top]
+    = \sigma^2\Big(h - 2\gamma(1-a) + \tfrac{\gamma}{2}(1-a^2)\Big)I,
+    \]
+    \[
+    \mathbb E[\eta_n^{(x)}(\eta_n^{(v)})^\top]
+    = \tfrac{\sigma^2}{2}(1-a)^2 I.
+    \]
+
+    Hence $(\eta_n^{(x)},\eta_n^{(v)})$ is sampled from a known Gaussian law.
+
+\end{frame}
+
+\begin{frame}{Key properties of the scheme}
+
+    \begin{itemize}
+        \item \textbf{Exact treatment of stiffness:} the linear relaxation in $V_t$ is solved analytically, avoiding instability of Euler--Maruyama for small $\gamma$
+        
+        \item \textbf{Correct scaling in $\gamma$:} all coefficients and noise moments remain uniformly bounded as $\gamma\to 0$
+        
+        \item \textbf{Minimal approximation:} the only discretization error comes from freezing $\nabla f$, which is assumed regular enough
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Discrete convergence setup}
+    Goal: compare the discrete underdamped position $\bar X_t^\gamma$ and the discrete overdamped position $\bar X_t^0$.
+    \bigskip
+    \begin{block}{Triangle inequality decomposition}
+        \[
+        \sup_{t\in[0,T]}\E|\bar X_t^\gamma-\bar X_t^0|^2
+        \le
+        C\sup_{t\in[0,T]}\E|\bar X_t^\gamma-X_t^\gamma|^2
+        \]
+        \[
+        \qquad\qquad
+        +C\sup_{t\in[0,T]}\E|X_t^\gamma-X_t^0|^2
+        +C\sup_{t\in[0,T]}\E|X_t^0-\bar X_t^0|^2
+        \]
+    \end{block}
+    \begin{itemize}
+        \item Middle term is already known:
+        \[
+        \sup_{t\in[0,T]}\E|X_t^\gamma-X_t^0|^2=\bigO(\gamma)
+        \]
+        \item Last term is the standard overdamped discretization error
+        \item Only tricky term:
+        \[
+        \sup_{t\in[0,T]}\E|\bar X_t^\gamma-X_t^\gamma|^2
+        \]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Current analytical target and what is left open}
+    Desired bound for the exponential scheme:
+    \[
+    \sup_{t\in[0,T]}\E|\bar X_t^\gamma-X_t^\gamma|^2\le Ch^\alpha
+    \]
+    with a constant $C$ \textbf{independent of $\gamma$}.
+    \bigskip
+    \begin{itemize}
+        \item If $\alpha=1$, then under $h\lesssim\gamma$ this would preserve the continuous $O(\gamma)$ rate at the discrete level
+        \item This is the main unresolved step in the discrete theory
+    \end{itemize}
+
+    \bigskip
+    
+    \textit{In future, the discrete analogue of max-in-time continuous rate is also established in a similar form}
+\end{frame}
+
+\begin{frame}{Numerical test: quadratic benchmark in dimension $d=1$}
+    Use the simple potential
+    \[
+    f(x)=\tfrac{\lambda}{2}x^2,\qquad \nabla f(x)=\lambda x
+    \]
+    so the continuous underdamped dynamics is linear:
+    \[
+    \begin{cases}
+    dX_t^\gamma=V_t^\gamma\,dt,\\
+    dV_t^\gamma=-\gamma^{-1}(\lambda X_t^\gamma+V_t^\gamma)\,dt
+    +\gamma^{-1}\sigma\,dW_t
+    \end{cases}
+    \]
+    \begin{itemize}
+        \item This case admits an exact Gaussian solution
+        \item Hence $X_t^\gamma$ can be computed exactly and compared to $\bar X_t^\gamma$
+        \item For fixed $\gamma$ and several step sizes $h$, measure
+        \[
+        \max_{t_n\le T}\E|\bar X_{t_n}^\gamma-X_{t_n}^\gamma|^2
+        \]
+        \item Then test whether the observed law is
+        \[
+        \max_{t_n\le T}\E|\bar X_{t_n}^\gamma-X_{t_n}^\gamma|^2
+        \approx C(\gamma)h^\alpha
+        \]
+        with $C(\gamma)$ stable as $\gamma\downarrow0$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Current research status}
+    \begin{itemize}
+        \item \textcolor{mygreen}{Continuous side:}
+        \begin{itemize}
+            \item time-marginal convergence
+            \[
+            \max_{t\in[0,T]}\E|X_t^\gamma-X_t^0|^2=\bigO(\gamma)
+            \]
+            is established
+            \item the max-in-time rate
+            \textcolor{lightgray}{
+            \[
+            \E\Big[\max_{t\in[0,T]}|X_t^\gamma-X_t^0|^2\Big]=\bigO(\gamma^{1/2})
+            \]
+            }
+            is still being checked and refined
+        \end{itemize}
+        \bigskip
+        \item \textcolor{mygreen}{Discrete side:}
+        \begin{itemize}
+            \item exponential discretization for the underdamped dynamics is proposed
+            \item main open goal is the uniform-in-$\gamma$ bound
+            \[
+            \sup_{t\in[0,T]}\E|\bar X_t^\gamma-X_t^\gamma|^2\le Ch^\alpha
+            \]
+            \item parallel numerical tests are used to assess whether $\alpha=1$ and whether $C$ remains bounded as $\gamma\downarrow0$
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% \begin{frame}
+% \frametitle{References}
+    % \printbibliography
+% \end{frame}
+
+% \begin{frame}[allowframebreaks]{References}
+%     \bibliography{_references}
+% \end{frame}
+
+\begin{frame}
+    \begin{center}
+        \huge Ready to answer your questions
+    \end{center}
+\end{frame}
+
+\end{document}

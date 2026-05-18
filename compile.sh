@@ -76,11 +76,19 @@ echo "--- XeLaTeX pass 3 ---"
 xelatex -interaction=nonstopmode -output-directory="${BUILD_DIR}" "${TEX_FILE}"
 
 FINAL_PDF="${BUILD_DIR}/${PROJECT_NAME}.pdf"
+DEST_PDF="${PDF_DIR}/${PROJECT_NAME}.pdf"
+
 if [[ -f "${FINAL_PDF}" ]]; then
-    cp "${FINAL_PDF}" "${PDF_DIR}/${PROJECT_NAME}.pdf"
+    if [[ -f "${DEST_PDF}" ]]; then
+        rsync --inplace "${FINAL_PDF}" "${DEST_PDF}"
+        touch "${DEST_PDF}"
+    else
+        cp "${FINAL_PDF}" "${DEST_PDF}"
+    fi
+
     echo ""
     echo "=== Done ==="
-    echo "    PDF: ${PDF_DIR}/${PROJECT_NAME}.pdf"
+    echo "    PDF: ${DEST_PDF}"
 else
     echo "Error: expected PDF not found at ${FINAL_PDF}" >&2
     exit 1

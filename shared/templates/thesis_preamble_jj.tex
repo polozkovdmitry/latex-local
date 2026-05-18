@@ -1,0 +1,135 @@
+\documentclass[9pt]{report}
+%\usepackage[showframe]{geometry}
+\usepackage[russian,english]{babel}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{newlfont}
+\usepackage{gensymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\usepackage[scaled=.85]{PTMono}
+\def\ind{{~\hbox{\rm l\kern-.4em\hbox{\rm l}}}~} %Indicator function
+\usepackage[mathscr]{euscript}
+\usepackage{ulem}
+\usepackage{amsthm}
+\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+
+% Copied from mathrsfs.sty
+\DeclareSymbolFont{rsfs}{U}{rsfs}{m}{n}
+\DeclareSymbolFontAlphabet{\mathscrsfs}{rsfs}
+
+\usepackage{amssymb, amsmath, amstext, amsthm, mathtools}
+\usepackage{enumitem}
+%\usepackage{icomma}   % install: sudo tlmgr install was
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{subcaption}
+\usepackage{float}
+\graphicspath{{.}}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+%\usepackage{showlabels}
+\usepackage{pifont}
+%\usepackage{tcolorbox} % requires newer LaTeX kernel tagging support
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\footskip}{45pt}
+
+% --- Complimentary from current preamble ---
+\usepackage{stmaryrd}
+\usepackage{empheq}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{todonotes}
+\usepackage{csquotes}
+
+% --- Bibliography ---
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+% --- Hyperref (load last) ---
+\usepackage{hyperref}
+
+% --- Custom imports ---
+\input{notations}
+
+% --- Safe image inclusion (shows empty figure if file missing) ---
+\newcommand{\safeincludegraphics}[2][]{%
+    \IfFileExists{#2}{%
+        \includegraphics[#1]{#2}%
+    }{%
+        \textcolor{gray}{\rule{0.8\linewidth}{0.6\linewidth}}%
+    }%
+}
+
+% --- Colors ---
+\definecolor{darkred}{RGB}{139,0,0}
+
+% --- Date helper ---
+\newcommand{\todayYYMMDD}{\the\year-\the\month-\the\day}
+
+% thm, cor, prop, rem, ex already defined in notations.tex
+\theoremstyle{plain}
+\newtheorem{lemme}[thm]{Lemma}
+\newtheorem{claim}{Claim}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+%
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+%
+\theoremstyle{remark}
+% todo conflicts with todonotes \todo command
+\newtheorem{remark}{Remark}[section]
+\newtheorem*{exoc}{Exercice}
+%
+\fancyhead[l]{\leftmark} \fancyhead[r]{}
+\begin{document}
+\begin{titlepage}
+ \begin{center}
+ \parbox{.5\linewidth}{%
+  \centering
+  {\Large{\textsc{
+     HSE University Moscow}}}\par}
+  \end{center}
+  \begin{center}
+ \safeincludegraphics[width=3cm]{/Users/dp/Documents/lsa/latex-local/projects_private/ksjj/figures/hse_logo.png}
+  \end{center}
+  \vspace{.05\textheight}
+  \vspace{.05\textheight}
+  \begin{center}
+  {\huge\bfseries\scshape Underdamped Langevin Algorithm \\ and It's Applications \par}
+  \end{center}
+  \vspace{.05\textheight}
+  {\large\scshape Master Program: Stochastic Modelling in Economics and Finance\par}
+  \vspace{.05\textheight}
+  \vfill
+  \raggedleft
+  \large
+  \textbf{Author:}\\
+  Dmitriy Georgievich Polozkov\\
+   2nd year of Master's program, group \foreignlanguage{russian}{МСМЭФ241}\\
+  \vspace{.05\textheight}
+  \raggedleft
+  \large
+  \textbf{Academic Advisor:}\\
+  Jean-Fran\c{c}ois Mehdi Jabir\\
+  Associate Professor, Faculty of Economic Sciences\\
+  Senior Research Fellow, LSA\\[4cm]
+  \begin{center}
+   Moscow, 2026
+  \end{center}
+ %\end{center}
+\end{titlepage}
+
+\chapter{Introduction}
+
+\section{Framework: Langevin dynamics}
+
+\end{document}

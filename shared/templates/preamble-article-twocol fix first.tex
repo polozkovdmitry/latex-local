@@ -1,3 +1,5 @@
+\documentclass[14pt,twocolumn]{extarticle}
+
 % --- Encoding / language (XeLaTeX-safe) ---
 \usepackage{fontspec}
 \usepackage[russian,english]{babel}
@@ -20,11 +22,13 @@
 \usepackage{wrapfig}
 \usepackage{subcaption}
 \usepackage{float}
-\usepackage{dblfloatfix}
+% \usepackage{stfloats}
+% \usepackage{dblfloatfix}
 \usepackage{xcolor}
 \usepackage{geometry}
 
 \geometry{
+    landscape, % для горизонтального
     left=2cm,
     right=2cm,
     top=2cm,
@@ -69,3 +73,18 @@
 
 % --- Date helper ---
 \newcommand{\todayYYMMDD}{\the\year-\the\month-\the\day}
+
+\begin{document}
+
+
+\begin{center}
+{\large\bfseries\MakeUppercase{Статья о 400 м с/б}}\\
+{\normalsize\bfseries\MakeUppercase{Вычисления на \texttt{Python} полная версия, ознакомительный материал, не в печать}}\\[0.5em]
+{\normalsize Д. Полозков для А. Полозкова}
+\end{center}
+
+\noindent\textit{Дата: \todayYYMMDD}
+
+
+
+\end{document}
